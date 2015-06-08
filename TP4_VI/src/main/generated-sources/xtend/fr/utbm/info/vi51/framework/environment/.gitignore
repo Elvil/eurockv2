@@ -4,9 +4,3 @@
 /.SimulationAgentReady.java._trace
 /.StartSimulation.java._trace
 /.StopSimulation.java._trace
-/EnvironmentAgent.java
-/InfluenceEvent.java
-/PerceptionEvent.java
-/SimulationAgentReady.java
-/StartSimulation.java
-/StopSimulation.java
