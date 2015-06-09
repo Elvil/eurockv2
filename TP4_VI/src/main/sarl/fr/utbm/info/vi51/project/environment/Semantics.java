@@ -17,12 +17,12 @@ public class Semantics {
 	public final static String ARTIST = "ARTIST";
 	public final static String SCENE = "SCENE";
 	
-	public final static String STAND_MIAM = "STAND_MIAM";
-	public final static String STAND_BOIRE = "STAND_BOIRE";
+	public final static String STAND_MIAM = "STANDMIAM";
+	public final static String STAND_BOIRE = "STANDBOIRE";
 	
 	public final static String EXIT = "EXIT";
 	public final static String ENTRANCE = "ENTRANCE";
 	
-	public final static String SECURITY_AGENT = "SECURITY_AGENT";
+	public final static String SECURITY_AGENT = "SECURITYAGENT";
 	
 }

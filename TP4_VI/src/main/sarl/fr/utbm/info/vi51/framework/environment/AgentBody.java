@@ -103,12 +103,13 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	
 	public void liveBody(){
 		
-		if(TimeToMiam > 0){
+		/*if(TimeToMiam > 0){
 				TimeToMiam--;
-		}
+		}*/
+		setType(State.SEARCH_WATCHING);
 		
 		//System.out.println(TimeToMiam);
-		if(TimeToMiam < (MaxMiam/2) ){
+		/*if(TimeToMiam < (MaxMiam/2) ){
 			setType(State.HUNGRY);
 		}else{
 			if(this.getType() == State.WATCHING){
@@ -117,7 +118,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 				setType(State.SEARCH_WATCHING);
 			}
 			
-		}
+		}*/
 		
 		
 	}

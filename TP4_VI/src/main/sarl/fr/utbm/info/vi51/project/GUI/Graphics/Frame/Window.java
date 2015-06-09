@@ -5,6 +5,7 @@ import java.util.Iterator;
 import fr.utbm.info.vi51.framework.environment.AgentBody;
 import fr.utbm.info.vi51.framework.environment.EnvironmentEvent;
 import fr.utbm.info.vi51.framework.environment.SituatedObject;
+import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.project.GUI.Graphics.Buttons.AddAgentButton;
 import fr.utbm.info.vi51.project.GUI.Graphics.Buttons.ZoomButton;
 import fr.utbm.info.vi51.project.GUI.Graphics.GraphicAgent.AbstractGraphicAgent;
@@ -44,6 +45,10 @@ public class Window extends AbstractFrame {
 	{
 		this.environment = ev;
 	}
+	public void setTarget(Point2f point)
+	{
+		this.environment.setMouseTarget(point);
+	}
 	public void run()
 	{
 		if (this.environment != null)
@@ -80,8 +85,8 @@ public class Window extends AbstractFrame {
 	private Window(String title, int h, int w) {
 		super(title, h, w);
 		int wx, wy;
-		wx = 1500;
-		wy = 1500;
+		wx = 800;
+		wy = 800;
 		this.gui = new LayoutGUI<>(h, w);
 		this.gui.setDoubleBuffered(true);
 		this.map = new LayoutMap<>(wx, wy);
@@ -128,7 +133,7 @@ public class Window extends AbstractFrame {
 	@Override
 	public void environmentChanged(EnvironmentEvent event) {
 		// TODO Auto-generated method stub
-		System.out.println("Event:"+event.toString());
+	//	System.out.println("Event:"+event.toString());
 		
 	}
 }

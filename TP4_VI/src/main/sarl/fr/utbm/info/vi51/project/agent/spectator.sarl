@@ -36,11 +36,11 @@ import fr.utbm.info.vi51.general.^behavior.steering.SteeringFleeBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringSeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringWanderBehaviour
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence
+import fr.utbm.info.vi51.project.environment.State
+import fr.utbm.info.vi51.project.environment.TestInfluence
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
-import fr.utbm.info.vi51.project.environment.State;
-import fr.utbm.info.vi51.project.environment.Semantics;
 
 agent spectator extends AbstractAnimat {
 	
@@ -52,9 +52,9 @@ agent spectator extends AbstractAnimat {
 	
 	val STOP_RADIUS = MathUtil.PI/10f
 	val SLOW_RADIUS = MathUtil.PI/4f
-	val WANDER_CIRCLE_DISTANCE = 20f
-	val WANDER_CIRCLE_RADIUS = 10f
-	val WANDER_MAX_ROTATION = MathUtil.PI/4f
+	val WANDER_CIRCLE_DISTANCE = 200f
+	val WANDER_CIRCLE_RADIUS = 100f
+	val WANDER_MAX_ROTATION = MathUtil.PI/2f
 	
 	on Initialize {
 		super._handle_Initialize_0(occurrence)
@@ -78,78 +78,48 @@ agent spectator extends AbstractAnimat {
 		
 	on PerceptionEvent {
 		var target = occurrence.perceptions.first
-		//occurrence.body.liveBody();
-		
-		//print(occurrence.body.type);
-		
-			
-			if(occurrence.body.type == State.HUNGRY && target !== null && target.name.equals(Semantics.STAND_MIAM))
-				{
-
-					println(target.name);
-					emitInfluence(
-						this.seekBehaviour.runSeek(
-							occurrence.body.position,
-							occurrence.body.currentLinearSpeed,
-							occurrence.body.maxLinear,
-							target.position
-						),
-						new TypeChangeInfluence(occurrence.body.type)
-					)
-					
-					
-				}
-				else{
-
-					emitInfluence(
-						this.wanderBehaviour.runWander(
-							occurrence.body.position,
-							occurrence.body.direction,
-							occurrence.body.currentLinearSpeed,
-							occurrence.body.maxLinear,
-							occurrence.body.currentAngularSpeed,
-							occurrence.body.maxAngular
-							),
-							new TypeChangeInfluence(occurrence.body.type)
-					)
-				}
-			
-		
-		/*if(target !== null){
+		if(target !== null){
 			if (target.name.equals("SceneUn") 
 				|| target.name.equals("SceneDeux") 
 				|| target.name.equals("SceneTrois") 
-				|| target.name.equals("Manger")
-				) {
+				|| target.name.equals("SCENE")
+				|| target.name.equals("Mouse Target")) {
 				
 			emitInfluence(
-					this.wanderBehaviour.runWander(
-					occurrence.body.position,
-					occurrence.body.direction,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular
-					),
-					new TypeChangeInfluence(State.ALERTED)
-				)
+						this.fleeBehaviour.runFlee(
+							occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							target.position
+						),
+						new TypeChangeInfluence(State.CALM)
+					)
 				
-				print("SCENE detected, need to flee this fucking position")
 				
-			}else{
-					
+			}
+			else{
+				/*emitInfluence(
+						this.seekBehaviour.runSeek(
+							occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							target.position
+						),
+						new TypeChangeInfluence(State.ALERTED)
+					)*/
 				emitInfluence(
 					this.wanderBehaviour.runWander(
 					occurrence.body.position,
 					occurrence.body.direction,
 					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
+					occurrence.body.maxLinearSpeed,
 					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular
+					occurrence.body.maxAngularSpeed
 					),
-					new TypeChangeInfluence(State.CALM)
+					//new TypeChangeInfluence(State.CALM)
+					//new TeletransportInfluence(occurrence.body.getBodyID(), new Point2f(0,0))
+					new TestInfluence(occurrence.body.getBodyID(), "Test")
 				)
-			
 			 }
 		}else{
 			
@@ -158,9 +128,9 @@ agent spectator extends AbstractAnimat {
 					occurrence.body.position,
 					occurrence.body.direction,
 					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
+					occurrence.body.maxLinearSpeed,
 					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular
+					occurrence.body.maxAngularSpeed
 					),
 					new TypeChangeInfluence(State.CALM)
 				)

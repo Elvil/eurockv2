@@ -1,37 +1,34 @@
 package fr.utbm.info.vi51.project;
 
 
+import io.sarl.lang.core.Agent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.sarl.lang.core.Agent;
 import fr.utbm.info.vi51.framework.FrameworkLauncher;
 import fr.utbm.info.vi51.framework.environment.AgentBody;
 import fr.utbm.info.vi51.framework.environment.DynamicType;
 import fr.utbm.info.vi51.framework.environment.ImmobileObject;
-import fr.utbm.info.vi51.framework.gui.BehaviorTypeSelector;
-import fr.utbm.info.vi51.framework.gui.FrameworkGUI;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Rectangle2f;
 import fr.utbm.info.vi51.framework.util.LocalizedString;
 import fr.utbm.info.vi51.framework.util.SpawnMapping;
 import fr.utbm.info.vi51.project.GUI.Graphics.Frame.Window;
 import fr.utbm.info.vi51.project.agent.Artist;
-import fr.utbm.info.vi51.project.agent.Rabbit;
-import fr.utbm.info.vi51.project.agent.spectator;
 import fr.utbm.info.vi51.project.agent.SecurityAgent;
-import fr.utbm.info.vi51.project.environment.WorldModel;
-import fr.utbm.info.vi51.project.guiOld.GUI;
+import fr.utbm.info.vi51.project.agent.spectator;
 import fr.utbm.info.vi51.project.environment.Semantics;
+import fr.utbm.info.vi51.project.environment.WorldModel;
 
 public class MainProgram {
 
-	private static float WORLD_SIZE_X = 500;
-	private static float WORLD_SIZE_Y = 500;
+	private static float WORLD_SIZE_X = 700;
+	private static float WORLD_SIZE_Y = 700;
 	private static int NUMBER_ARTIST = 0;
-	private static int NUMBER_SPECTATOR = 100;
-	private static int NUMBER_SECURITYAGENT = 0;
+	private static int NUMBER_SPECTATOR = 5;
+	private static int NUMBER_SECURITYAGENT = 10;
 
 	/** Main program.
 	 * 
@@ -54,13 +51,13 @@ public class MainProgram {
 		List<ImmobileObject> listIm = new ArrayList<ImmobileObject>();
 		
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(100,100), Semantics.SCENE));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(200,200), Semantics.STAND_MIAM));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(0, 0), new Point2f(100, 300)), new Point2f(500,200), Semantics.SCENE));
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,100), Semantics.STAND_MIAM));
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(150,150), Semantics.STAND_MIAM));
-		/*listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,234), "Scene"));
-		*/
+		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,234), "Scene"));
 		environment.setImmobileObject(listIm);
 		
+		Window w = Window.getInstance();
 		
 		for (int i = 0; i < NUMBER_ARTIST; ++i) {
 			environment.createArtist();
@@ -71,11 +68,11 @@ public class MainProgram {
 		for (int i = 0; i < NUMBER_SECURITYAGENT; ++i) {
 			environment.createSecurityAgent();
 		}
-		
-		
-		Window w = Window.getInstance();
+		Thread.sleep(1);
+
 		w.setEnvironment(environment);
 		w.run();
+		w.setTarget(new Point2f(0,0));
 		
 		
 		//FrameworkGUI gui = new GUI(WORLD_SIZE_X, WORLD_SIZE_Y,environment.getTimeManager());
@@ -83,7 +80,7 @@ public class MainProgram {
 		FrameworkLauncher.launchSimulation(
 				environment,
 				new ApplicationMapping(),
-				DynamicType.STEERING,
+				DynamicType.KINEMATIC,
 				w);
 		
 				System.out.println("je suis à la fin)");
