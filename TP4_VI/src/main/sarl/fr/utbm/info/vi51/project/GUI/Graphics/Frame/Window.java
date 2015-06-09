@@ -15,6 +15,7 @@ import fr.utbm.info.vi51.project.GUI.Graphics.GraphicBuilding.GraphicScene;
 import fr.utbm.info.vi51.project.GUI.Graphics.Layout.LayoutAgent;
 import fr.utbm.info.vi51.project.GUI.Graphics.Layout.LayoutGUI;
 import fr.utbm.info.vi51.project.GUI.Graphics.Layout.LayoutMap;
+import fr.utbm.info.vi51.project.environment.Semantics;
 import fr.utbm.info.vi51.project.environment.WorldModel;
 
 
@@ -53,11 +54,11 @@ public class Window extends AbstractFrame {
 				if (obj.getType().equals("BODY"))
 				{
 					aBody = (AgentBody) obj;
-					if (aBody.getName() == "ARTIST")
+					if (aBody.getName() == Semantics.ARTIST)
 						this.addAgent(new GraphicArtist(aBody));
-					if (aBody.getName() == "SECURITYAGENT")
+					if (aBody.getName() == Semantics.SECURITY_AGENT)
 						this.addAgent(new GraphicSecurityAgent(aBody));
-					if (aBody.getName() == "SPECTATOR")
+					if (aBody.getName() == Semantics.SPECTATOR)
 						this.addAgent(new GraphicSpectator(aBody));
 				}
 				else

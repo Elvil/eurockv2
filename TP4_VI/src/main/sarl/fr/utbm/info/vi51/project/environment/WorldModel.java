@@ -225,6 +225,15 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				stateChanged();
 			}
 		}
+		
+		// ADD IMMOBILIE OBJECT
+		
+		IteratorData itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
+		
+		while(itImmobile.hasNext()){
+			actionTree.addData(new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(2,2), 0));
+		}
+		
 		//
 		// Put the influences in a spatial tree
 		for (MotionInfluence mi : motionInfluences) {
@@ -245,15 +254,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			}
 
 			actionTree.addData(new SituatedArtifact(body, linearMotion, angularMotion));
-		}
-		// ADD IMMOBILIE OBJECT
-		
-		IteratorData itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
-		
-		while(itImmobile.hasNext()){
-			actionTree.addData(new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(50,50), 10));
-		}
-			
+		}	
 		
 		// Detect conflicts
 		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(actionTree.getRoot());
@@ -268,7 +269,6 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				SituatedArtifact inf1 = influences.get(i);
 				if (!inf1.isEmpty()) {
 					Shape2f<?> s1 = inf1.getShape();
-					System.out.print(inf1.getShape().getBounds());
 					for (SituatedObject obj : getAllObjects()) {
 						if ((!(obj instanceof AgentBody)) && (s1.intersects(obj.getShape()))) {
 							inf1.clear();
@@ -281,7 +281,6 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 							if (!inf2.isEmpty()) {
 								if (s1.intersects(inf2.getShape())) {
 									inf2.clear();
-									System.out.print("JE SUIS UN OBJET en CONTACT ");
 								}
 							}
 						}
@@ -409,8 +408,25 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	
 
 	protected Point2f randomPosition() {
-		float x = (float) Math.random() * getWidth() - RABBIT_SIZE;
-		float y = (float) Math.random() * getHeight() - RABBIT_SIZE;
+		
+		boolean search = true;
+		float x = 1;
+		float y = 1;
+		SituatedObject obj = null;
+		while(search){
+			x = (float) Math.random() * getWidth() - RABBIT_SIZE;
+			y = (float) Math.random() * getHeight() - RABBIT_SIZE;
+			Rectangle2f position = new Rectangle2f(new Point2f(x-1,y-1), new Point2f(x+1,y+1));
+			Iterator itImmobile = dataStructureImmobile.dataIterator(position);
+			
+			if(itImmobile.hasNext()){
+				search = true;
+				System.out.print("on a un problème");
+			}else{
+				search = false;
+			}
+		}
+		
 		return new Point2f(x, y);
 	}
 
