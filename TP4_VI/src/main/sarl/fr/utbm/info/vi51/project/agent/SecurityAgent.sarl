@@ -93,7 +93,7 @@ agent SecurityAgent extends AbstractAnimat {
 				),
 				new TypeChangeInfluence("RAVENOUS")
 			)
-			//print('je suis sencer ne rien faire ...')
+			print('je suis le mec');
 			//occurrence.body.setState(State.ALERTED)
 		}else{
 			emitInfluence(

@@ -79,8 +79,8 @@ public class Window extends AbstractFrame {
 	private Window(String title, int h, int w) {
 		super(title, h, w);
 		int wx, wy;
-		wx = 700;
-		wy = 700;
+		wx = 1500;
+		wy = 1500;
 		this.gui = new LayoutGUI<>(h, w);
 		this.gui.setDoubleBuffered(true);
 		this.map = new LayoutMap<>(wx, wy);

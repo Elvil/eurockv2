@@ -23,11 +23,11 @@ public class GraphicSpectator extends AbstractGraphicAgent {
 	@Override
 	public void draw(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		if (this.realAgent.getState() == State.ALERTED)
+		if (this.realAgent.getType() == State.ALERTED)
 			panic(g2d);
 		
 		
-		if (this.realAgent.getState() == State.CALM)
+		if (this.realAgent.getType() == State.CALM)
 			g2d.setColor(Color.blue);
 		else
 			g2d.setColor(Color.red);

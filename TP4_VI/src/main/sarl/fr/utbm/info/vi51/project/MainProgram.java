@@ -19,21 +19,19 @@ import fr.utbm.info.vi51.framework.util.SpawnMapping;
 import fr.utbm.info.vi51.project.GUI.Graphics.Frame.Window;
 import fr.utbm.info.vi51.project.agent.Artist;
 import fr.utbm.info.vi51.project.agent.Rabbit;
-
-
 import fr.utbm.info.vi51.project.agent.spectator;
 import fr.utbm.info.vi51.project.agent.SecurityAgent;
 import fr.utbm.info.vi51.project.environment.WorldModel;
 import fr.utbm.info.vi51.project.guiOld.GUI;
-import fr.utbm.info.vi51.project.semantics.Semantics;
+import fr.utbm.info.vi51.project.environment.Semantics;
 
 public class MainProgram {
 
-	private static float WORLD_SIZE_X = 1000;
-	private static float WORLD_SIZE_Y = 700;
-	private static int NUMBER_ARTIST = 2;
-	private static int NUMBER_SPECTATOR = 2;
-	private static int NUMBER_SECURITYAGENT = 1;
+	private static float WORLD_SIZE_X = 500;
+	private static float WORLD_SIZE_Y = 500;
+	private static int NUMBER_ARTIST = 0;
+	private static int NUMBER_SPECTATOR = 1;
+	private static int NUMBER_SECURITYAGENT = 0;
 
 	/** Main program.
 	 * 
@@ -64,12 +62,12 @@ public class MainProgram {
 		
 		List<ImmobileObject> listIm = new ArrayList<ImmobileObject>();
 		
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(200,234), "Scene"));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(250,234), "Scene"));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(500,234), "Scene"));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(300,234), "Scene"));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,234), "Scene"));
-		
+		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(100,100), Semantics.SCENE));
+		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(500,500), Semantics.SCENE));
+		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(500,0), Semantics.SCENE));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(50,50), Semantics.STAND_MIAM));
+		/*listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,234), "Scene"));
+		*/
 		environment.setImmobileObject(listIm);
 		
 		

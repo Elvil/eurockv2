@@ -40,7 +40,7 @@ public class ShapeConverter {
 	}
 	public static Rectangle2D toRectangle(Rectangle2f rect)
 	{
-		return new Rectangle2D.Double(rect.getUpper().getX(), rect.getUpper().getY(), rect.getWidth(), rect.getHeight());
+		return new Rectangle2D.Double(rect.getLower().getX(), rect.getLower().getY(), rect.getWidth(), rect.getHeight());
 	}
 	public static Ellipse2D toEllipse(Circle2f circle)
 	{

@@ -1,11 +1,11 @@
 package fr.utbm.info.vi51.project.semantics;
 
-public abstract class Semantics {
+public abstract class Semanticss {
 
 	String nom;
 
 	
-	public Semantics(String nom) {
+	public Semanticss(String nom) {
 		this.nom = nom;
 	}
 

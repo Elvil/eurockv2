@@ -238,6 +238,7 @@ public abstract class AbstractEnvironment implements Environment {
 		List<Percept> list;
 		for(AgentBody body : this.agentBodies.values()) {
 			list = computePerceptionsFor(body);
+			body.liveBody();
 			if (list==null) list = Collections.emptyList();
 			body.setPerceptions(list);
 		}

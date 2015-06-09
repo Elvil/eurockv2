@@ -22,7 +22,7 @@ public class QuadTreeNode<D extends ShapedObject> implements Serializable{
 	private Rectangle2f bounds;
 	private LinkedList<D> objets;
 	
-	private static int totaleDataPerNode = 1;
+	private static int totaleDataPerNode = 6;
 	
 	public QuadTreeNode(Rectangle2f rectangle2f) {
 		this.bounds = rectangle2f;

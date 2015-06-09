@@ -59,6 +59,8 @@ import fr.utbm.info.vi51.general.influence.RemoveInfluence;
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence;
 import fr.utbm.info.vi51.general.tree.QuadTree;
 import fr.utbm.info.vi51.general.tree.QuadTreeNode;
+import fr.utbm.info.vi51.general.tree.iterator.IteratorAllNode;
+import fr.utbm.info.vi51.general.tree.iterator.IteratorData;
 import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
 
 /**
@@ -71,7 +73,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 
 	private final static float RABBIT_SIZE = 20f;
 	
-	private final static float PERCEPTION_RADIUS = 20f;
+	private final static float PERCEPTION_RADIUS = 160f;
 	
 	private final static UUID TARGET_ID = UUID.randomUUID();
 
@@ -147,7 +149,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	protected List<Percept> computePerceptionsFor(AgentBody agent) {
 		
 		List<Percept> shapedPercept = new ArrayList<>();
-		
+		SituatedObject obj = null;
 		Frustum frustumAgent = agent.getFrustum();
 		
 		Shape2f<?> frustumShapde = frustumAgent.toShape(agent.getPosition(), agent.getDirection());
@@ -155,7 +157,16 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		Iterator it = dataStructure.dataIterator(frustumShapde);
 		
 		while(it.hasNext()){
-			SituatedObject obj = (SituatedObject) it.next();
+			obj = (SituatedObject) it.next();
+			if (!agent.getID().equals(obj.getID())) {
+				shapedPercept.add(new Percept(obj));
+			}
+		}
+		
+		Iterator itImmobile = dataStructureImmobile.dataIterator(frustumShapde);
+		
+		while(itImmobile.hasNext()){
+			obj = (SituatedObject) itImmobile.next();
 			if (!agent.getID().equals(obj.getID())) {
 				shapedPercept.add(new Percept(obj));
 			}
@@ -235,7 +246,15 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 
 			actionTree.addData(new SituatedArtifact(body, linearMotion, angularMotion));
 		}
-		//
+		// ADD IMMOBILIE OBJECT
+		
+		IteratorData itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
+		
+		while(itImmobile.hasNext()){
+			actionTree.addData(new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(50,50), 10));
+		}
+			
+		
 		// Detect conflicts
 		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(actionTree.getRoot());
 		while (iterator.hasNext()) {
@@ -249,6 +268,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				SituatedArtifact inf1 = influences.get(i);
 				if (!inf1.isEmpty()) {
 					Shape2f<?> s1 = inf1.getShape();
+					System.out.print(inf1.getShape().getBounds());
 					for (SituatedObject obj : getAllObjects()) {
 						if ((!(obj instanceof AgentBody)) && (s1.intersects(obj.getShape()))) {
 							inf1.clear();
@@ -261,6 +281,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 							if (!inf2.isEmpty()) {
 								if (s1.intersects(inf2.getShape())) {
 									inf2.clear();
+									System.out.print("JE SUIS UN OBJET en CONTACT ");
 								}
 							}
 						}
@@ -335,12 +356,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				5f,						// max linear speed m/s
-				.5f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/4f,				// max angular speed r/s
-				MathUtil.PI/10f,			// max angular acceleration (r/s)/s
+				3f,						// max linear speed m/s
+				.3f,						// max linear acceleration (m/s)/s
+				MathUtil.PI/3f,				// max angular speed r/s
+				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class, "ARTIST", getAgentBodyNumber() + 1));
+		body.setName(LocalizedString.getString(WorldModel.class, Semantics.ARTIST, getAgentBodyNumber() + 1));
 		addAgentBody(
 				body,
 				randomPosition(),
@@ -355,12 +376,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				5f,						// max linear speed m/s
-				.5f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/4f,				// max angular speed r/s
-				MathUtil.PI/10f,			// max angular acceleration (r/s)/s
+				3f,						// max linear speed m/s
+				.3f,						// max linear acceleration (m/s)/s
+				MathUtil.PI/3f,				// max angular speed r/s
+				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class, "SPECTATOR", getAgentBodyNumber() + 1));
+		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SPECTATOR, getAgentBodyNumber() + 1));
 		addAgentBody(
 				body,
 				randomPosition(),
@@ -374,12 +395,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				5f,						// max linear speed m/s
-				.5f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/4f,				// max angular speed r/s
-				MathUtil.PI/10f,			// max angular acceleration (r/s)/s
+				3f,						// max linear speed m/s
+				.3f,						// max linear acceleration (m/s)/s
+				MathUtil.PI/3f,				// max angular speed r/s
+				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class, "SECURITYAGENT", getAgentBodyNumber() + 1));
+		body.setName(LocalizedString.getString(WorldModel.class, Semantics.SECURITY_AGENT, getAgentBodyNumber() + 1));
 		addAgentBody(
 				body,
 				randomPosition(),
@@ -418,6 +439,13 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			this.angularMotion = angularMotion;
 			this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
 		}
+		
+		/*public SituatedArtifact(SituatedObject objectImmobile){
+			this.object = null;
+			this.linearMotion = null;
+			this.angularMotion = 0;
+			this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
+		}*/
 		
 		@Override
 		public boolean equals(Object obj) {

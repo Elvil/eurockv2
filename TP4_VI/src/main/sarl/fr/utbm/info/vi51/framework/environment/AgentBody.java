@@ -29,7 +29,9 @@ import fr.utbm.info.vi51.framework.math.MathUtil;
 import fr.utbm.info.vi51.framework.math.Shape2f;
 import fr.utbm.info.vi51.framework.math.Vector2f;
 import fr.utbm.info.vi51.framework.util.LocalizedString;
+import fr.utbm.info.vi51.project.environment.Semantics;
 import fr.utbm.info.vi51.project.environment.State;
+import fr.utbm.info.vi51.project.semantics.Semanticss;
 
 /**
  * Object on the environment.
@@ -42,7 +44,10 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	private static final long serialVersionUID = -4636419559142339321L;
 	
 	private final Frustum frustum;
-	private State state;
+	private int MaxMiam = 100;
+	private int TimeToMiam = 100;
+	private Semantics WantToWatch;
+	private int TimeToWatch = 100000;
 	
 	private transient MotionInfluence motionInfluence = null;
 	private transient List<Influence> otherInfluences = new ArrayList<>();
@@ -62,7 +67,8 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		super(id, shape, maxLinearSpeed, maxLinearAcceleration, maxAngularSpeed, maxAngularAcceleration);
 		assert (frustum == null || Objects.equals(id, frustum.getOwner()));
 		this.frustum = frustum;
-		this.state = State.CALM;
+		setType(State.CALM);
+		//Ne pas supprimer sinon ça ne marche pas ??
 		setType("BODY");
 	}
 	
@@ -95,22 +101,27 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		return this.frustum;
 	}
 	
-	
-	/** Replies the state associated to this body.
-	 *
-	 * @return the state.
-	 */
-	public State getState() {
-		return this.state;
+	public void liveBody(){
+		
+		if(TimeToMiam > 0){
+				TimeToMiam--;
+		}
+		
+		//System.out.println(TimeToMiam);
+		if(TimeToMiam < (MaxMiam/2) ){
+			setType(State.HUNGRY);
+		}else{
+			if(this.getType() == State.WATCHING){
+				TimeToWatch--;
+			}else{
+				setType(State.SEARCH_WATCHING);
+			}
+			
+		}
+		
+		
 	}
 	
-	/** Replies the state associated to this body.
-	 *
-	 * @return the state.
-	 */
-	public void setState(State etat) {
-		this.state = etat ;
-	}
 	
 	/** Invoked to send the given influence to the environment.
 	 *

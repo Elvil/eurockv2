@@ -39,6 +39,8 @@ import fr.utbm.info.vi51.general.influence.TypeChangeInfluence
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
+import fr.utbm.info.vi51.project.environment.State;
+import fr.utbm.info.vi51.project.environment.Semantics;
 
 agent spectator extends AbstractAnimat {
 	
@@ -76,21 +78,94 @@ agent spectator extends AbstractAnimat {
 		
 	on PerceptionEvent {
 		var target = occurrence.perceptions.first
+		//occurrence.body.liveBody();
 		
+		//print(occurrence.body.type);
 		
-		/*if (target === null) {*/
+			
+			if(occurrence.body.type == State.HUNGRY && target !== null && target.name.equals(Semantics.STAND_MIAM))
+				{
+
+					println(target.name);
+					emitInfluence(
+						this.seekBehaviour.runSeek(
+							occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinear,
+							target.position
+						),
+						new TypeChangeInfluence(occurrence.body.type)
+					)
+					
+					
+				}
+				else{
+
+					emitInfluence(
+						this.wanderBehaviour.runWander(
+							occurrence.body.position,
+							occurrence.body.direction,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinear,
+							occurrence.body.currentAngularSpeed,
+							occurrence.body.maxAngular
+							),
+							new TypeChangeInfluence(occurrence.body.type)
+					)
+				}
+			
+		
+		/*if(target !== null){
+			if (target.name.equals("SceneUn") 
+				|| target.name.equals("SceneDeux") 
+				|| target.name.equals("SceneTrois") 
+				|| target.name.equals("Manger")
+				) {
+				
 			emitInfluence(
-				this.wanderBehaviour.runWander(
-				occurrence.body.position,
-				occurrence.body.direction,
-				occurrence.body.currentLinearSpeed,
-				occurrence.body.maxLinear,
-				occurrence.body.currentAngularSpeed,
-				occurrence.body.maxAngular
-				),
-				new TypeChangeInfluence("BODY")
-			)
-		/*} else if (target.type == "TARGET") {
+					this.wanderBehaviour.runWander(
+					occurrence.body.position,
+					occurrence.body.direction,
+					occurrence.body.currentLinearSpeed,
+					occurrence.body.maxLinear,
+					occurrence.body.currentAngularSpeed,
+					occurrence.body.maxAngular
+					),
+					new TypeChangeInfluence(State.ALERTED)
+				)
+				
+				print("SCENE detected, need to flee this fucking position")
+				
+			}else{
+					
+				emitInfluence(
+					this.wanderBehaviour.runWander(
+					occurrence.body.position,
+					occurrence.body.direction,
+					occurrence.body.currentLinearSpeed,
+					occurrence.body.maxLinear,
+					occurrence.body.currentAngularSpeed,
+					occurrence.body.maxAngular
+					),
+					new TypeChangeInfluence(State.CALM)
+				)
+			
+			 }
+		}else{
+			
+		 emitInfluence(
+					this.wanderBehaviour.runWander(
+					occurrence.body.position,
+					occurrence.body.direction,
+					occurrence.body.currentLinearSpeed,
+					occurrence.body.maxLinear,
+					occurrence.body.currentAngularSpeed,
+					occurrence.body.maxAngular
+					),
+					new TypeChangeInfluence(State.CALM)
+				)
+			
+		} /*else if (target.type == "TARGET") {
 			emitInfluence(
 				this.seekBehaviour.runSeek(
 					occurrence.body.position,
