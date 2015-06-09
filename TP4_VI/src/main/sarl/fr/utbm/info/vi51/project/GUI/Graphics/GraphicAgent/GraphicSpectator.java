@@ -32,6 +32,8 @@ public class GraphicSpectator extends AbstractGraphicAgent {
 		else
 			g2d.setColor(Color.red);
 		g2d.fill(ShapeConverter.toShape(this.realAgent.getShape()));
+		g2d.drawLine((int)this.pos.getX()+5, (int)this.pos.getY()+5, 5 + (int) (this.pos.getX()+this.realAgent.getDirection().getX()*10), 5 + (int) (this.pos.getY()+10*this.realAgent.getDirection().getY()));
+		//System.out.println("X:"+this.realAgent.getDirection().getX()+" Y:"+this.realAgent.getDirection().getY());
 	}
 	public void panic(Graphics2D g2d)
 	{
