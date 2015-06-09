@@ -71,7 +71,7 @@ import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
  */
 public class WorldModel extends AbstractEnvironment implements WorldModelStateProvider {
 
-	private final static float RABBIT_SIZE = 20f;
+	private final static float RABBIT_SIZE = 10f;
 	
 	private final static float PERCEPTION_RADIUS = 160f;
 	
@@ -268,7 +268,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			for (int i = 0; i < influences.size(); ++i) {
 				SituatedArtifact inf1 = influences.get(i);
 				if (!inf1.isEmpty()) {
-					Shape2f<?> s1 = inf1.getShape();
+					Shape2f<?> s1 = inf1.getShape();	
 					for (SituatedObject obj : getAllObjects()) {
 						if ((!(obj instanceof AgentBody)) && (s1.intersects(obj.getShape()))) {
 							inf1.clear();
@@ -280,6 +280,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 							SituatedArtifact inf2 = influences.get(j);
 							if (!inf2.isEmpty()) {
 								if (s1.intersects(inf2.getShape())) {
+									//System.out.println(""+inf2.getShape().getClass().toString());
 									inf2.clear();
 								}
 							}
@@ -295,6 +296,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			if (!action.isEmpty() && obj != null) {
 				boolean b = this.dataStructure.removeData(obj);
 				assert (b) : "Object cannot be removed from quadtree: " + obj;
+				//System.out.println("Action appliqu�e:"+action.getShape().getClass().toString());
 				move(obj, action.getLinearMotion(), action.getAngularMotion());
 				b = this.dataStructure.addData(obj);
 				assert (b) : "Object cannot be added in quadtree: " + obj;
@@ -421,7 +423,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			
 			if(itImmobile.hasNext()){
 				search = true;
-				System.out.print("on a un problème");
+				//System.out.print("on a un problème");
 			}else{
 				search = false;
 			}
@@ -441,7 +443,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		private final MobileObject object;
 		private final Vector2f linearMotion;
 		private final float angularMotion;
-		private final MotionHull2f shape;
+		//private final MotionHull2f shape;
+		private final Shape2f shape;
 		private boolean cleared;
 		
 		/**
@@ -453,7 +456,11 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			this.object = object instanceof MobileObject ? (MobileObject) object : null;
 			this.linearMotion = linearMotion;
 			this.angularMotion = angularMotion;
-			this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
+			//this.shape = object.getPosition();
+			if (!(object instanceof AgentBody))
+				this.shape = object.getShape();
+			else
+				this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
 		}
 		
 		/*public SituatedArtifact(SituatedObject objectImmobile){
