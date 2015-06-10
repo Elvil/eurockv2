@@ -30,7 +30,7 @@ public class MainProgram {
 	private static float WORLD_SIZE_X = 500;
 	private static float WORLD_SIZE_Y = 500;
 	private static int NUMBER_ARTIST = 0;
-	private static int NUMBER_SPECTATOR = 100;
+	private static int NUMBER_SPECTATOR = 1;
 	private static int NUMBER_SECURITYAGENT = 0;
 
 	/** Main program.
@@ -54,7 +54,7 @@ public class MainProgram {
 		List<ImmobileObject> listIm = new ArrayList<ImmobileObject>();
 		
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(100,100), Semantics.SCENE));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(200,200), Semantics.STAND_MIAM));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(10, 10)), new Point2f(100,100), Semantics.STAND_MIAM));
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,100), Semantics.STAND_MIAM));
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(150,150), Semantics.STAND_MIAM));
 		/*listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,234), "Scene"));

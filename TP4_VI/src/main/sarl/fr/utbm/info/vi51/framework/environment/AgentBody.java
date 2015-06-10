@@ -23,6 +23,7 @@ package fr.utbm.info.vi51.framework.environment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
 
 import fr.utbm.info.vi51.framework.math.MathUtil;
@@ -103,22 +104,42 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	
 	public void liveBody(){
 		
+		Random randomGenerator = new Random();
+		
+		//All the time
 		if(TimeToMiam > 0){
 				TimeToMiam--;
 		}
 		
-		//System.out.println(TimeToMiam);
-		if(TimeToMiam < (MaxMiam/2) ){
-			setType(State.HUNGRY);
-		}else{
-			if(this.getType() == State.WATCHING){
-				TimeToWatch--;
+		if(!this.getPerceivedObjects().isEmpty())
+			if(TimeToMiam <= 0){
+				if(this.getPerceivedObjects().get(0).getName().equals(Semantics.STAND_MIAM)){
+					if(TimeToMiam > -1000){
+						TimeToMiam-=2;
+					}else{
+						TimeToMiam = randomGenerator.nextInt(30000);
+					}
+				}
+			}
+		
+		if(!getType().equals(State.ALERTED)){
+			
+			if(TimeToMiam < (MaxMiam/2) ){
+				setType(State.HUNGRY);
 			}else{
-				setType(State.SEARCH_WATCHING);
+				if(this.getType() == State.WATCHING){
+					TimeToWatch--;
+				}else{
+					setType(State.SEARCH_WATCHING);
+				}
+				
 			}
 			
 		}
 		
+		if(getType().equals(State.HUNGRY)){
+			System.out.print("J'ai faim");
+		}
 		
 	}
 	

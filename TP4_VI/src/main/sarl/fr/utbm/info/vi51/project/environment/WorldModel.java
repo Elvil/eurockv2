@@ -71,9 +71,9 @@ import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
  */
 public class WorldModel extends AbstractEnvironment implements WorldModelStateProvider {
 
-	private final static float RABBIT_SIZE = 20f;
+	private final static float RABBIT_SIZE = 10f;
 	
-	private final static float PERCEPTION_RADIUS = 160f;
+	private final static float PERCEPTION_RADIUS = 150f;
 	
 	private final static UUID TARGET_ID = UUID.randomUUID();
 
@@ -421,7 +421,6 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			
 			if(itImmobile.hasNext()){
 				search = true;
-				System.out.print("on a un problème");
 			}else{
 				search = false;
 			}

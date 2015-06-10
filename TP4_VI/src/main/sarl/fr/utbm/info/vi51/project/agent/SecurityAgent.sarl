@@ -68,7 +68,7 @@ agent SecurityAgent extends AbstractAnimat {
 					WANDER_MAX_ROTATION,
 					STOP_RADIUS,
 					SLOW_RADIUS)
-			this.watchAlert = new AlertBehaviour();
+			this.watchAlert = new AlertBehaviour(60F);
 		}
 		else {
 			this.seekBehaviour =  new KinematicSeekBehaviour
@@ -83,7 +83,7 @@ agent SecurityAgent extends AbstractAnimat {
 		
 		
 		/*if (target === null) {*/
-		if(watchAlert.runAlert(occurrence.perceptions)){
+		if(watchAlert.runAlert(occurrence.body.position,occurrence.perceptions)){
 			emitInfluence(
 				this.seekBehaviour.runSeek(
 					occurrence.body.position,
