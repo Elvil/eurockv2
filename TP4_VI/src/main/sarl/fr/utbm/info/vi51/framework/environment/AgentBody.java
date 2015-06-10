@@ -43,36 +43,46 @@ import fr.utbm.info.vi51.project.semantics.Semanticss;
 public class AgentBody extends AbstractMobileObject implements Body {
 
 	private static final long serialVersionUID = -4636419559142339321L;
-	
+
 	private final Frustum frustum;
-	private int MaxMiam = 100;
-	private int TimeToMiam = 100;
+	private int MaxMiam = 7000;
+	private int TimeToMiam = new Random().nextInt(7000);
 	private Semantics WantToWatch;
-	private int TimeToWatch = 100000;
-	
+	private int TimeToWatch = 1000;
+	private int TimePasserCommande=0;
+
 	private transient MotionInfluence motionInfluence = null;
 	private transient List<Influence> otherInfluences = new ArrayList<>();
 	private transient List<Percept> perceptionss = new ArrayList<>();
 
 	/**
 	 * @param id
-	 * @param shape the shape of the body, considering that it is centered at the (0,0) position.
-	 * @param maxLinearSpeed is the maximal linear speed.
-	 * @param maxLinearAcceleration is the maximal linear acceleration.
-	 * @param maxAngularSpeed is the maximal angular speed.
-	 * @param maxAngularAcceleration is the maximal angular acceleration.
-	 * @param frustum the field-of-view associated to the body.
+	 * @param shape
+	 *            the shape of the body, considering that it is centered at the
+	 *            (0,0) position.
+	 * @param maxLinearSpeed
+	 *            is the maximal linear speed.
+	 * @param maxLinearAcceleration
+	 *            is the maximal linear acceleration.
+	 * @param maxAngularSpeed
+	 *            is the maximal angular speed.
+	 * @param maxAngularAcceleration
+	 *            is the maximal angular acceleration.
+	 * @param frustum
+	 *            the field-of-view associated to the body.
 	 */
-	public AgentBody(UUID id, Shape2f<?> shape, float maxLinearSpeed, float maxLinearAcceleration,
-			float maxAngularSpeed, float maxAngularAcceleration, Frustum frustum) {
-		super(id, shape, maxLinearSpeed, maxLinearAcceleration, maxAngularSpeed, maxAngularAcceleration);
+	public AgentBody(UUID id, Shape2f<?> shape, float maxLinearSpeed,
+			float maxLinearAcceleration, float maxAngularSpeed,
+			float maxAngularAcceleration, Frustum frustum) {
+		super(id, shape, maxLinearSpeed, maxLinearAcceleration,
+				maxAngularSpeed, maxAngularAcceleration);
 		assert (frustum == null || Objects.equals(id, frustum.getOwner()));
 		this.frustum = frustum;
 		setType(State.CALM);
-		//Ne pas supprimer sinon ça ne marche pas ??
+		// Ne pas supprimer sinon ça ne marche pas ??
 		setType("BODY");
 	}
-	
+
 	@Override
 	public AgentBody clone() {
 		AgentBody clone = (AgentBody) super.clone();
@@ -82,84 +92,103 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		return clone;
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String toString() {
-		String label = LocalizedString.getString(getClass(), "BODY_OF", getID()); //$NON-NLS-1$;
+		String label = LocalizedString
+				.getString(getClass(), "BODY_OF", getID()); //$NON-NLS-1$;
 		String name = getName();
 		if (name != null && !name.isEmpty()) {
 			return name + "(" + label + ")";
 		}
 		return label;
 	}
-	
-	/** Replies the frustum associated to this body.
+
+	/**
+	 * Replies the frustum associated to this body.
 	 *
 	 * @return the frustum.
 	 */
 	public Frustum getFrustum() {
 		return this.frustum;
 	}
-	
-	public void liveBody(){
-		
+
+	public void liveBody() {
+
 		Random randomGenerator = new Random();
-		
-		//All the time
-		if(TimeToMiam > 0){
-				TimeToMiam--;
+
+		// All the time
+		if (TimeToMiam > 0) {
+			TimeToMiam--;
 		}
 
-		
-		if(!this.getPerceivedObjects().isEmpty())
-			if(TimeToMiam <= 0){
-				if(this.getPerceivedObjects().get(0).getName().equals(Semantics.STAND_MIAM)){
-					if(TimeToMiam > -1000){
-						TimeToMiam-=2;
-					}else{
-						TimeToMiam = randomGenerator.nextInt(30000);
+		if (!this.getPerceivedObjects().isEmpty())
+			if (getType().equals(State.HUNGRY)) {
+				if (searchTarget(Semantics.STAND_MIAM)) {
+					if (TimePasserCommande < 150) {
+						TimePasserCommande += 2;
+						//System.out.println("je me restaure");
+					} else {
+						//System.out.println("j'ai finis");
+						TimePasserCommande = 0;
+						TimeToMiam = randomGenerator.nextInt(5000);
 					}
 				}
 			}
-		
-		if(!getType().equals(State.ALERTED)){
-			
-			if(TimeToMiam < (MaxMiam/2) ){
+
+		if (!getType().equals(State.ALERTED)) {
+
+			if (TimeToMiam < (MaxMiam / 3)) {
 				setType(State.HUNGRY);
-			}else{
-				if(this.getType() == State.WATCHING){
+			} else {
+				if (this.getType() == State.WATCHING) {
 					TimeToWatch--;
-				}else{
+				} else {
 					setType(State.SEARCH_WATCHING);
 				}
-				
+
 			}
-			
+
+		} else {
+			// System.out.println("J'ai peur");
 		}
 		
-		if(getType().equals(State.HUNGRY)){
-			System.out.print("J'ai faim");
+		if (getType().equals(State.HUNGRY)) {
+			//System.out.println("j'ai faim");
 		}
-		
+
 	}
-	
-	
-	/** Invoked to send the given influence to the environment.
+
+	private boolean searchTarget(String target) {
+		for (Percept p : this.getPerceivedObjects()) {
+			if (p.getName().equals(target))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Invoked to send the given influence to the environment.
 	 *
-	 * @param influence the influence.
+	 * @param influence
+	 *            the influence.
 	 */
 	public void influence(Influence influence) {
 		if (influence != null) {
 			if (influence instanceof MotionInfluence) {
 				MotionInfluence mi = (MotionInfluence) influence;
-				if (mi.getInfluencedObject() == null || mi.getInfluencedObject().equals(getID())) {
-					switch(mi.getType()) {
+				if (mi.getInfluencedObject() == null
+						|| mi.getInfluencedObject().equals(getID())) {
+					switch (mi.getType()) {
 					case KINEMATIC:
-						influenceKinematic(mi.getLinearInfluence(), mi.getAngularInfluence());
+						influenceKinematic(mi.getLinearInfluence(),
+								mi.getAngularInfluence());
 						break;
 					case STEERING:
-						influenceSteering(mi.getLinearInfluence(), mi.getAngularInfluence());
+						influenceSteering(mi.getLinearInfluence(),
+								mi.getAngularInfluence());
 						break;
 					}
 				} else {
@@ -171,83 +200,102 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		}
 	}
 
-	/** Invoked to send the influence to the environment.
+	/**
+	 * Invoked to send the influence to the environment.
 	 * 
-	 * @param linearInfluence is the linear influence to apply on the object.
-	 * @param angularInfluence is the angular influence to apply on the object.
+	 * @param linearInfluence
+	 *            is the linear influence to apply on the object.
+	 * @param angularInfluence
+	 *            is the angular influence to apply on the object.
 	 */
-	public void influenceKinematic(Vector2f linearInfluence, float angularInfluence) {
+	public void influenceKinematic(Vector2f linearInfluence,
+			float angularInfluence) {
 		Vector2f li;
-		if (linearInfluence!=null) {
+		if (linearInfluence != null) {
 			li = new Vector2f(linearInfluence);
 			float nSpeed = li.length();
-			if (nSpeed>getMaxLinearSpeed()) {
+			if (nSpeed > getMaxLinearSpeed()) {
 				li.normalize();
 				li.scale(getMaxLinearSpeed());
 			}
-		}
-		else {
+		} else {
 			li = new Vector2f();
 		}
-		float ai = MathUtil.clamp(angularInfluence, -getMaxAngularSpeed(), getMaxAngularSpeed());
-		this.motionInfluence = new MotionInfluence(DynamicType.KINEMATIC, getID(), li, ai);
+		float ai = MathUtil.clamp(angularInfluence, -getMaxAngularSpeed(),
+				getMaxAngularSpeed());
+		this.motionInfluence = new MotionInfluence(DynamicType.KINEMATIC,
+				getID(), li, ai);
 	}
-	
-	/** Invoked to send the influence to the environment.
+
+	/**
+	 * Invoked to send the influence to the environment.
 	 * 
-	 * @param linearInfluence is the linear influence to apply on the object.
-	 * @param angularInfluence is the angular influence to apply on the object.
+	 * @param linearInfluence
+	 *            is the linear influence to apply on the object.
+	 * @param angularInfluence
+	 *            is the angular influence to apply on the object.
 	 */
-	public void influenceSteering(Vector2f linearInfluence, float angularInfluence) {
+	public void influenceSteering(Vector2f linearInfluence,
+			float angularInfluence) {
 		Vector2f li;
-		if (linearInfluence!=null) {
+		if (linearInfluence != null) {
 			li = new Vector2f(linearInfluence);
 			float nSpeed = li.length();
-			if (nSpeed>getMaxLinearAcceleration()) {
+			if (nSpeed > getMaxLinearAcceleration()) {
 				li.normalize();
 				li.scale(getMaxLinearAcceleration());
 			}
-		}
-		else {
+		} else {
 			li = new Vector2f();
 		}
-		float ai = MathUtil.clamp(angularInfluence, -getMaxAngularAcceleration(), getMaxAngularAcceleration());
-		this.motionInfluence = new MotionInfluence(DynamicType.STEERING, getID(), li, ai);
+		float ai = MathUtil.clamp(angularInfluence,
+				-getMaxAngularAcceleration(), getMaxAngularAcceleration());
+		this.motionInfluence = new MotionInfluence(DynamicType.STEERING,
+				getID(), li, ai);
 	}
 
-	/** Invoked to send the influence to the environment.
+	/**
+	 * Invoked to send the influence to the environment.
 	 * 
-	 * @param linearInfluence is the linear influence to apply on the object.
+	 * @param linearInfluence
+	 *            is the linear influence to apply on the object.
 	 */
 	public void influenceKinematic(Vector2f linearInfluence) {
 		influenceKinematic(linearInfluence, 0f);
 	}
-	
-	/** Invoked to send the influence to the environment.
+
+	/**
+	 * Invoked to send the influence to the environment.
 	 * 
-	 * @param linearInfluence is the linear influence to apply on the object.
+	 * @param linearInfluence
+	 *            is the linear influence to apply on the object.
 	 */
 	public void influenceSteering(Vector2f linearInfluence) {
 		influenceSteering(linearInfluence, 0f);
 	}
-	
-	/** Invoked to send the influence to the environment.
+
+	/**
+	 * Invoked to send the influence to the environment.
 	 * 
-	 * @param angularInfluence is the angular influence to apply on the object.
+	 * @param angularInfluence
+	 *            is the angular influence to apply on the object.
 	 */
 	public void influenceKinematic(float angularInfluence) {
 		influenceKinematic(null, angularInfluence);
 	}
-	
-	/** Invoked to send the influence to the environment.
+
+	/**
+	 * Invoked to send the influence to the environment.
 	 * 
-	 * @param angularInfluence is the angular influence to apply on the object.
+	 * @param angularInfluence
+	 *            is the angular influence to apply on the object.
 	 */
 	public void influenceSteering(float angularInfluence) {
 		influenceSteering(null, angularInfluence);
 	}
-	
-	/** Replies all the perceived objects.
+
+	/**
+	 * Replies all the perceived objects.
 	 * 
 	 * @return the perceived objects.
 	 */
@@ -255,36 +303,41 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		return this.perceptionss;
 	}
 
-	/** Replies the influence.
+	/**
+	 * Replies the influence.
 	 * 
 	 * @return the influence.
 	 */
 	List<Influence> consumeOtherInfluences() {
 		List<Influence> otherInfluences = this.otherInfluences;
 		this.otherInfluences = new ArrayList<>();
-		for(Influence i : otherInfluences) {
-			if (i!=null) i.setEmitter(getID());
+		for (Influence i : otherInfluences) {
+			if (i != null)
+				i.setEmitter(getID());
 		}
 		return otherInfluences;
 	}
-	
-	/** Replies the influence.
+
+	/**
+	 * Replies the influence.
 	 * 
 	 * @return the influence.
 	 */
 	MotionInfluence consumeMotionInfluence() {
 		MotionInfluence mi = this.motionInfluence;
 		this.motionInfluence = null;
-		if (mi!=null) mi.setEmitter(getID());
+		if (mi != null)
+			mi.setEmitter(getID());
 		return mi;
 	}
 
-	/** Set the perceptions.
+	/**
+	 * Set the perceptions.
 	 * 
 	 * @param perceptions
 	 */
 	void setPerceptions(List<Percept> perceptions) {
-		assert(perceptions!=null);
+		assert (perceptions != null);
 		this.perceptionss = perceptions;
 	}
 

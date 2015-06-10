@@ -48,8 +48,8 @@ public final class MouseTarget extends AbstractMobileObject {
 				Float.MAX_VALUE,
 				Float.MAX_VALUE,
 				x, y);
-		setName("Mouse Target");
-		setType("TARGET");
+		setName(Semantics.BOMB);
+		setType(State.CALM);
 	}
 	
 	/** Change the position of the mouse target.

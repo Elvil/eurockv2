@@ -73,7 +73,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 
 	private final static float RABBIT_SIZE = 10f;
 	
-	private final static float PERCEPTION_RADIUS = 150f;
+	private final static float PERCEPTION_RADIUS = 70f;
 	
 	private final static UUID TARGET_ID = UUID.randomUUID();
 
@@ -154,19 +154,20 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		SituatedObject obj = null;
 		Frustum frustumAgent = agent.getFrustum();
 		
-		Shape2f<?> frustumShapde = frustumAgent.toShape(agent.getPosition(), agent.getDirection());
-		if (mouseTarget != null)
-			shapedPercept.add(new Percept(mouseTarget));
-		/*Iterator it = dataStructure.dataIterator(frustumShapde);
+		Shape2f<?> frustumShape = frustumAgent.toShape(agent.getPosition(), agent.getDirection());
+		//if (mouseTarget != null)
+			//shapedPercept.add(new Percept(mouseTarget));
+		
+		Iterator it = dataStructure.dataIterator(frustumShape);
 		
 		while(it.hasNext()){
 			obj = (SituatedObject) it.next();
-			if (!agent.getID().equals(obj.getID()) && !(obj instanceof AgentBody)) {
+			if (!agent.getID().equals(obj.getID()) ) {
 				shapedPercept.add(new Percept(obj));
 			}
-		}*/
+		}
 		
-		Iterator itImmobile = dataStructureImmobile.dataIterator(frustumShapde);
+		Iterator itImmobile = dataStructureImmobile.dataIterator(frustumShape);
 		
 		while(itImmobile.hasNext()){
 			obj = (SituatedObject) itImmobile.next();
@@ -286,7 +287,9 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 							SituatedArtifact inf2 = influences.get(j);
 							if (!inf2.isEmpty()) {
 								if (s1.intersects(inf2.getShape())) {
+									if(inf2.getObject() instanceof AgentBody){
 									inf2.clear();
+									}
 									//break;
 								}
 							}
@@ -363,10 +366,10 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				3f,						// max linear speed m/s
-				.3f,						// max linear acceleration (m/s)/s
+				1f,						// max linear speed m/s
+				.4f,						// max linear acceleration (m/s)/s
 				MathUtil.PI/3f,				// max angular speed r/s
-				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
+				MathUtil.PI/4f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
 		body.setName(LocalizedString.getString(WorldModel.class, Semantics.ARTIST, getAgentBodyNumber() + 1));
 		addAgentBody(
@@ -383,10 +386,10 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				7f,						// max linear speed m/s
-				.3f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/3f,				// max angular speed r/s
-				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
+				2f,						// max linear speed m/s
+				.4f,						// max linear acceleration (m/s)/s
+				MathUtil.PI/2f,				// max angular speed r/s
+				MathUtil.PI/4f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
 		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SPECTATOR, getAgentBodyNumber() + 1));
 		addAgentBody(
@@ -394,15 +397,18 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				randomPosition(),
 				(float) Math.random() * MathUtil.TWO_PI);
 	}
+
+	/** Create the body of a SecurityAgent.
+	 */
 	
 	public void createSecurityAgent() {
 		UUID id = UUID.randomUUID();
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				7f,						// max linear speed m/s
-				.3f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/3f,				// max angular speed r/s
+				2f,						// max linear speed m/s
+				.5f,						// max linear acceleration (m/s)/s
+				MathUtil.PI/2f,				// max angular speed r/s
 				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
 		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SECURITY_AGENT, getAgentBodyNumber() + 1));
@@ -411,25 +417,6 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				randomPosition(),
 				(float) Math.random() * MathUtil.TWO_PI);
 	}
-	/** Create the body of a Spectator.
-	 */
-/*	public void createSecurityAgent() {
-		UUID id = UUID.randomUUID();
-		AgentBody body = new AgentBody(
-				id,
-				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				3f,						// max linear speed m/s
-				.3f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/3f,				// max angular speed r/s
-				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
-				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class, Semantics.SECURITY_AGENT, getAgentBodyNumber() + 1));
-		addAgentBody(
-				body,
-				randomPosition(),
-				(float) Math.random() * MathUtil.TWO_PI);
-	}*/
-	
 
 	protected Point2f randomPosition() {
 		
@@ -576,7 +563,13 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		/** Clear the movement definition.
 		 */
 		public void clear() {
-			this.cleared = true;
+			this.linearMotion.normalize();
+			this.linearMotion.negate();
+			//this.linearMotion.setLength(this.linearMotion.length()/2);
+			//this.linearMotion.setOrientationAngle(this.linearMotion.getOrientationAngle()+5);
+			//this.cleared = true;
+			//this.linearMotion.set(new Vector2f());
+
 		}
 
 	}

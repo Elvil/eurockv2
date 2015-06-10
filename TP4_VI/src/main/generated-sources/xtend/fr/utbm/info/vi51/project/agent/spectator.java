@@ -50,15 +50,15 @@ public class spectator extends AbstractAnimat {
   
   protected AlertBehaviour alertBehaviour;
   
-  protected final float STOP_RADIUS = (MathUtil.PI / 10f);
+  protected final float STOP_RADIUS = (MathUtil.PI / 8f);
   
-  protected final float SLOW_RADIUS = (MathUtil.PI / 4f);
+  protected final float SLOW_RADIUS = (MathUtil.PI / 2f);
   
   protected final float WANDER_CIRCLE_DISTANCE = 20f;
   
   protected final float WANDER_CIRCLE_RADIUS = 10f;
   
-  protected final float WANDER_MAX_ROTATION = (MathUtil.PI / 2f);
+  protected final float WANDER_MAX_ROTATION = (MathUtil.PI / 4f);
   
   @Percept
   public void _handle_Initialize_0(final Initialize occurrence) {
@@ -75,7 +75,7 @@ public class spectator extends AbstractAnimat {
         this.STOP_RADIUS, 
         this.SLOW_RADIUS);
       this.wanderBehaviour = _steeringWanderBehaviour;
-      AlertBehaviour _alertBehaviour = new AlertBehaviour(40f);
+      AlertBehaviour _alertBehaviour = new AlertBehaviour(30f);
       this.alertBehaviour = _alertBehaviour;
     } else {
       KinematicSeekBehaviour _kinematicSeekBehaviour = new KinematicSeekBehaviour();
@@ -93,79 +93,82 @@ public class spectator extends AbstractAnimat {
   public void _handle_PerceptionEvent_1(final PerceptionEvent occurrence) {
     fr.utbm.info.vi51.framework.environment.Percept target = this.first(occurrence.perceptions);
     boolean boolWander = true;
-    boolean _or = false;
-    Point2f _position = occurrence.body.getPosition();
-    boolean _runAlert = this.alertBehaviour.runAlert(_position, occurrence.perceptions);
-    if (_runAlert) {
-      _or = true;
-    } else {
-      Serializable _type = occurrence.body.getType();
-      boolean _equals = _type.equals(State.ALERTED);
-      _or = _equals;
-    }
-    if (_or) {
-      Point2f _position_1 = occurrence.body.getPosition();
-      float _currentLinearSpeed = occurrence.body.getCurrentLinearSpeed();
-      float _maxLinear = this.getMaxLinear(occurrence.body);
-      Point2f _point2f = new Point2f(300, 300);
-      BehaviourOutput _runSeek = this.seekBehaviour.runSeek(_position_1, _currentLinearSpeed, _maxLinear, _point2f);
-      TypeChangeInfluence _typeChangeInfluence = new TypeChangeInfluence(State.ALERTED);
-      this.emitInfluence(_runSeek, _typeChangeInfluence);
-      boolWander = false;
-    } else {
-      if ((target != null)) {
-        boolean _and = false;
-        Serializable _type_1 = occurrence.body.getType();
-        boolean _equals_1 = Objects.equal(_type_1, State.HUNGRY);
-        if (!_equals_1) {
-          _and = false;
+    if ((target != null)) {
+      boolean _or = false;
+      boolean _runAlert = this.alertBehaviour.runAlert(occurrence.body, occurrence.perceptions);
+      if (_runAlert) {
+        _or = true;
+      } else {
+        Serializable _type = occurrence.body.getType();
+        boolean _equals = _type.equals(State.ALERTED);
+        _or = _equals;
+      }
+      if (_or) {
+        Point2f _position = occurrence.body.getPosition();
+        float _currentLinearSpeed = occurrence.body.getCurrentLinearSpeed();
+        float _maxLinear = this.getMaxLinear(occurrence.body);
+        Point2f _point2f = new Point2f(400, 0);
+        BehaviourOutput _runSeek = this.seekBehaviour.runSeek(_position, _currentLinearSpeed, _maxLinear, _point2f);
+        TypeChangeInfluence _typeChangeInfluence = new TypeChangeInfluence(State.ALERTED);
+        this.emitInfluence(_runSeek, _typeChangeInfluence);
+        boolWander = false;
+      } else {
+        Point2f targetPos = this.alertBehaviour.searchTarget(Semantics.STAND_MIAM, occurrence.perceptions);
+        boolean _or_1 = false;
+        float _x = targetPos.getX();
+        boolean _notEquals = (_x != 0);
+        if (_notEquals) {
+          _or_1 = true;
         } else {
-          String _name = target.getName();
-          boolean _equals_2 = _name.equals(Semantics.STAND_MIAM);
-          _and = _equals_2;
+          float _y = targetPos.getY();
+          boolean _notEquals_1 = (_y != 0);
+          _or_1 = _notEquals_1;
         }
-        if (_and) {
-          Point2f _position_2 = occurrence.body.getPosition();
-          float _currentLinearSpeed_1 = occurrence.body.getCurrentLinearSpeed();
-          float _maxLinear_1 = this.getMaxLinear(occurrence.body);
-          Point2f _position_3 = target.getPosition();
-          BehaviourOutput _runSeek_1 = this.seekBehaviour.runSeek(_position_2, _currentLinearSpeed_1, _maxLinear_1, _position_3);
-          Serializable _type_2 = occurrence.body.getType();
-          TypeChangeInfluence _typeChangeInfluence_1 = new TypeChangeInfluence(_type_2);
-          this.emitInfluence(_runSeek_1, _typeChangeInfluence_1);
-          boolWander = false;
-        }
-        boolean _and_1 = false;
-        Serializable _type_3 = occurrence.body.getType();
-        boolean _equals_3 = Objects.equal(_type_3, State.SEARCH_WATCHING);
-        if (!_equals_3) {
-          _and_1 = false;
-        } else {
-          String _name_1 = target.getName();
-          boolean _equals_4 = _name_1.equals(Semantics.SCENE);
-          _and_1 = _equals_4;
-        }
-        if (_and_1) {
-          Point2f _position_4 = occurrence.body.getPosition();
-          float _currentLinearSpeed_2 = occurrence.body.getCurrentLinearSpeed();
-          float _maxLinear_2 = this.getMaxLinear(occurrence.body);
-          Point2f _position_5 = target.getPosition();
-          BehaviourOutput _runSeek_2 = this.seekBehaviour.runSeek(_position_4, _currentLinearSpeed_2, _maxLinear_2, _position_5);
-          Serializable _type_4 = occurrence.body.getType();
-          TypeChangeInfluence _typeChangeInfluence_2 = new TypeChangeInfluence(_type_4);
-          this.emitInfluence(_runSeek_2, _typeChangeInfluence_2);
-          boolWander = false;
+        if (_or_1) {
+          Serializable _type_1 = occurrence.body.getType();
+          boolean _equals_1 = Objects.equal(_type_1, State.HUNGRY);
+          if (_equals_1) {
+            Point2f _position_1 = occurrence.body.getPosition();
+            float _currentLinearSpeed_1 = occurrence.body.getCurrentLinearSpeed();
+            float _maxLinear_1 = this.getMaxLinear(occurrence.body);
+            BehaviourOutput _runSeek_1 = this.seekBehaviour.runSeek(_position_1, _currentLinearSpeed_1, _maxLinear_1, targetPos);
+            Serializable _type_2 = occurrence.body.getType();
+            TypeChangeInfluence _typeChangeInfluence_1 = new TypeChangeInfluence(_type_2);
+            this.emitInfluence(_runSeek_1, _typeChangeInfluence_1);
+            boolWander = false;
+          }
+          boolean _and = false;
+          Serializable _type_3 = occurrence.body.getType();
+          boolean _equals_2 = Objects.equal(_type_3, State.SEARCH_WATCHING);
+          if (!_equals_2) {
+            _and = false;
+          } else {
+            String _name = target.getName();
+            boolean _equals_3 = _name.equals(Semantics.SCENE);
+            _and = _equals_3;
+          }
+          if (_and) {
+            Point2f _position_2 = occurrence.body.getPosition();
+            float _currentLinearSpeed_2 = occurrence.body.getCurrentLinearSpeed();
+            float _maxLinear_2 = this.getMaxLinear(occurrence.body);
+            Point2f _position_3 = target.getPosition();
+            BehaviourOutput _runSeek_2 = this.seekBehaviour.runSeek(_position_2, _currentLinearSpeed_2, _maxLinear_2, _position_3);
+            Serializable _type_4 = occurrence.body.getType();
+            TypeChangeInfluence _typeChangeInfluence_2 = new TypeChangeInfluence(_type_4);
+            this.emitInfluence(_runSeek_2, _typeChangeInfluence_2);
+            boolWander = false;
+          }
         }
       }
     }
     if (boolWander) {
-      Point2f _position_6 = occurrence.body.getPosition();
+      Point2f _position_4 = occurrence.body.getPosition();
       Vector2f _direction = occurrence.body.getDirection();
       float _currentLinearSpeed_3 = occurrence.body.getCurrentLinearSpeed();
       float _maxLinear_3 = this.getMaxLinear(occurrence.body);
       float _currentAngularSpeed = occurrence.body.getCurrentAngularSpeed();
       float _maxAngular = this.getMaxAngular(occurrence.body);
-      BehaviourOutput _runWander = this.wanderBehaviour.runWander(_position_6, _direction, _currentLinearSpeed_3, _maxLinear_3, _currentAngularSpeed, _maxAngular);
+      BehaviourOutput _runWander = this.wanderBehaviour.runWander(_position_4, _direction, _currentLinearSpeed_3, _maxLinear_3, _currentAngularSpeed, _maxAngular);
       Serializable _type_5 = occurrence.body.getType();
       TypeChangeInfluence _typeChangeInfluence_3 = new TypeChangeInfluence(_type_5);
       this.emitInfluence(_runWander, _typeChangeInfluence_3);

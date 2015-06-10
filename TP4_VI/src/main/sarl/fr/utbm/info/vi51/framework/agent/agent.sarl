@@ -71,6 +71,7 @@ agent AbstractAnimat {
 		if (list.isEmpty) null else list.get(0)
 	}
 
+
 	on StopSimulation {
 		killMe
 	}

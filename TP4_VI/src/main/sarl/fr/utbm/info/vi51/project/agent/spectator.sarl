@@ -52,11 +52,11 @@ agent spectator extends AbstractAnimat {
 	var fleeBehaviour : FleeBehaviour
 	var wanderBehaviour : WanderBehaviour
 	var alertBehaviour : AlertBehaviour
-	val STOP_RADIUS = MathUtil.PI / 10f
-	val SLOW_RADIUS = MathUtil.PI / 4f
+	val STOP_RADIUS = MathUtil.PI / 8f
+	val SLOW_RADIUS = MathUtil.PI / 2f
 	val WANDER_CIRCLE_DISTANCE = 20f
 	val WANDER_CIRCLE_RADIUS = 10f
-	val WANDER_MAX_ROTATION = MathUtil.PI / 2f
+	val WANDER_MAX_ROTATION = MathUtil.PI / 4f
 
 	on Initialize {
 		super._handle_Initialize_0(occurrence)
@@ -67,7 +67,8 @@ agent spectator extends AbstractAnimat {
 			WANDER_CIRCLE_RADIUS,
 			WANDER_MAX_ROTATION,
 			STOP_RADIUS,
-			SLOW_RADIUS) this.alertBehaviour = new AlertBehaviour(40f);
+			SLOW_RADIUS);
+			this.alertBehaviour = new AlertBehaviour(30f);
 		}
 		else {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
@@ -78,58 +79,40 @@ agent spectator extends AbstractAnimat {
 	on PerceptionEvent {
 		var target = occurrence.perceptions.first
 		var boolWander = true;
-		
-		//occurrence.body.liveBody();
 
-		//print(target.name);
+		if(target !== null) {
+		//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
+			if(alertBehaviour.runAlert(occurrence.body, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED)) {
+				emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+				occurrence.body.currentLinearSpeed,
+				occurrence.body.maxLinear,
+				new Point2f(400, 0)),
+				new TypeChangeInfluence(State.ALERTED))
+				//print("on doit fuir ahah");
+				boolWander = false;
+			} else {
+				var targetPos = this.alertBehaviour.searchTarget(Semantics.STAND_MIAM, occurrence.perceptions)
+				if(targetPos.getX != 0 || targetPos.getY != 0) {
+					if(occurrence.body.type == State.HUNGRY)
+					{
+						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+						occurrence.body.currentLinearSpeed,
+						occurrence.body.maxLinear,
+						targetPos),
+						new TypeChangeInfluence(occurrence.body.type))
+						boolWander = false;
+					}
 
-		/*if(target !== null){
-			if(target.position.distance(occurrence.body.position) < 130){
-				print("position pas élevé");
-				emitInfluence(
-				this.fleeBehaviour.runFlee(
-					occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position
-				),
-				new TypeChangeInfluence(State.CALM)
-				)
-			}
-			}*/
-
-//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
-		if(alertBehaviour.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED)) {
-			emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-			occurrence.body.currentLinearSpeed,
-			occurrence.body.maxLinear,
-			new Point2f(300, 300)),
-			new TypeChangeInfluence(State.ALERTED))
-			boolWander = false;
-		} else {
-
-			if(target !== null) {
-
-				if(occurrence.body.type == State.HUNGRY && target.name.equals(Semantics.STAND_MIAM))
-				{
-					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position),
-					new TypeChangeInfluence(occurrence.body.type))
-					boolWander = false;
+					if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE))
+					{
+						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+						occurrence.body.currentLinearSpeed,
+						occurrence.body.maxLinear,
+						target.position),
+						new TypeChangeInfluence(occurrence.body.type))
+						boolWander = false;
+					}
 				}
-
-				if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE))
-				{
-					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position),
-					new TypeChangeInfluence(occurrence.body.type))
-					boolWander = false;
-				}
-
 			}
 
 		}
@@ -142,7 +125,6 @@ agent spectator extends AbstractAnimat {
 			occurrence.body.currentAngularSpeed,
 			occurrence.body.maxAngular),
 			new TypeChangeInfluence(occurrence.body.type))
-
 		}
 	}
 
