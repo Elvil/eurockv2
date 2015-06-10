@@ -110,6 +110,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		if(TimeToMiam > 0){
 				TimeToMiam--;
 		}
+
 		
 		if(!this.getPerceivedObjects().isEmpty())
 			if(TimeToMiam <= 0){

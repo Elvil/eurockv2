@@ -82,5 +82,7 @@ public interface Body {
 	 * @return the perceived objects.
 	 */
 	List<Percept> getPerceivedObjects();
+	
+	void liveBody();
 
 }

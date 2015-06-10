@@ -13,6 +13,9 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.utbm.info.vi51.framework.math.Point2f;
+import fr.utbm.info.vi51.project.GUI.Graphics.Frame.Window;
+
 public class MouseManager implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private int x, y;
 	private List<AbstractLayout<?>> l;
@@ -28,12 +31,23 @@ public class MouseManager implements MouseListener, MouseMotionListener, MouseWh
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// Not used for now
+		Point2f pt = new Point2f(this.x, this.y);
+		//Window.getInstance().setTarget(pt);
+		
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
 		this.x = e.getX();
 		this.y = e.getY();
+		
+		int clicx = (int) ((100/l.get(0).getZoom()) * (x - l.get(0).getLocation().getX()));
+		int clicy = (int) ((100/l.get(0).getZoom()) * (y - l.get(0).getLocation().getY()));
+		
+		
+		Point2f pt = new Point2f(clicx, clicy);
+		
+		Window.getInstance().setTarget(pt);
+		
 		for (AbstractLayout<?> al : l)
 			System.out.println("Source:"+al.actionClick(this.x, this.y));
 	}

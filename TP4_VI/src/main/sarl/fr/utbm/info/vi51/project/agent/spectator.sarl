@@ -36,6 +36,8 @@ import fr.utbm.info.vi51.general.^behavior.steering.SteeringFleeBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringSeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringWanderBehaviour
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence
+import fr.utbm.info.vi51.project.environment.State
+import fr.utbm.info.vi51.project.environment.TestInfluence
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
@@ -54,7 +56,7 @@ agent spectator extends AbstractAnimat {
 	val SLOW_RADIUS = MathUtil.PI / 4f
 	val WANDER_CIRCLE_DISTANCE = 20f
 	val WANDER_CIRCLE_RADIUS = 10f
-	val WANDER_MAX_ROTATION = MathUtil.PI / 4f
+	val WANDER_MAX_ROTATION = MathUtil.PI / 2f
 
 	on Initialize {
 		super._handle_Initialize_0(occurrence)
@@ -76,6 +78,7 @@ agent spectator extends AbstractAnimat {
 	on PerceptionEvent {
 		var target = occurrence.perceptions.first
 		var boolWander = true;
+		
 		//occurrence.body.liveBody();
 
 		//print(target.name);
@@ -141,78 +144,6 @@ agent spectator extends AbstractAnimat {
 			new TypeChangeInfluence(occurrence.body.type))
 
 		}
-
-		/*if(target !== null){
-			if (target.name.equals("SceneUn") 
-				|| target.name.equals("SceneDeux") 
-				|| target.name.equals("SceneTrois") 
-				|| target.name.equals("Manger")
-				) {
-				
-			emitInfluence(
-					this.wanderBehaviour.runWander(
-					occurrence.body.position,
-					occurrence.body.direction,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular
-					),
-					new TypeChangeInfluence(State.ALERTED)
-				)
-				
-				print("SCENE detected, need to flee this fucking position")
-				
-			}else{
-					
-				emitInfluence(
-					this.wanderBehaviour.runWander(
-					occurrence.body.position,
-					occurrence.body.direction,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular
-					),
-					new TypeChangeInfluence(State.CALM)
-				)
-			
-			 }
-		}else{
-			
-		 emitInfluence(
-					this.wanderBehaviour.runWander(
-					occurrence.body.position,
-					occurrence.body.direction,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular
-					),
-					new TypeChangeInfluence(State.CALM)
-				)
-			
-		} /*else if (target.type == "TARGET") {
-			emitInfluence(
-				this.seekBehaviour.runSeek(
-					occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position
-				),
-				new TypeChangeInfluence("RAVENOUS")
-			)
-		} else {
-			emitInfluence(
-				this.fleeBehaviour.runFlee(
-					occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position
-				),
-				new TypeChangeInfluence("SCARED")
-			)
-		}*/
 	}
 
 }

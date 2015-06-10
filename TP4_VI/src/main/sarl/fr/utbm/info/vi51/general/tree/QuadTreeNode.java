@@ -1,14 +1,12 @@
 package fr.utbm.info.vi51.general.tree;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.utbm.info.vi51.framework.environment.ShapedObject;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Rectangle2f;
 import fr.utbm.info.vi51.framework.math.Shape2f;
-import fr.utbm.info.vi51.general.tree.iterator.IteratorAllNode;
 
 public class QuadTreeNode<D extends ShapedObject> implements Serializable{
 	
@@ -22,7 +20,7 @@ public class QuadTreeNode<D extends ShapedObject> implements Serializable{
 	private Rectangle2f bounds;
 	private LinkedList<D> objets;
 	
-	private static int totaleDataPerNode = 6;
+	private static int totaleDataPerNode = 10;
 	
 	public QuadTreeNode(Rectangle2f rectangle2f) {
 		this.bounds = rectangle2f;
@@ -128,7 +126,7 @@ public class QuadTreeNode<D extends ShapedObject> implements Serializable{
 	}
 	public boolean addData(D data){
 		// Constante -> nombre de data dans un noeud
-		// Si supérieur à la constante alors on redispatch dans les children
+		// Si supÃ©rieur Ã  la constante alors on redispatch dans les children
 		// Sinon on ajoute
 		if(this.isLeaf()){
 			if(this.getData() != null && this.getData().size() < totaleDataPerNode){

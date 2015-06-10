@@ -36,38 +36,39 @@ import fr.utbm.info.vi51.general.^behavior.steering.SteeringFleeBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringSeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringWanderBehaviour
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence
+import fr.utbm.info.vi51.project.environment.State
+import fr.utbm.info.vi51.project.environment.TestInfluence
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
 import fr.utbm.info.vi51.general.^behavior.AlertBehaviour
-import fr.utbm.info.vi51.project.environment.State;
 
 agent SecurityAgent extends AbstractAnimat {
 	
 	uses PhysicEnvironment, Lifecycle, DefaultContextInteractions
 	
-	var seekBehaviour : SeekBehaviour
-	var fleeBehaviour : FleeBehaviour
-	var wanderBehaviour : WanderBehaviour
-	var watchAlert : AlertBehaviour
+	var seekBehaviour : SeekBehaviour;
+	var fleeBehaviour : FleeBehaviour;
+	var wanderBehaviour : WanderBehaviour;
+	var watchAlert : AlertBehaviour;
 	
-	val STOP_RADIUS = MathUtil.PI/10f
-	val SLOW_RADIUS = MathUtil.PI/4f
-	val WANDER_CIRCLE_DISTANCE = 20f
-	val WANDER_CIRCLE_RADIUS = 10f
-	val WANDER_MAX_ROTATION = MathUtil.PI/4f
+	val STOP_RADIUS = MathUtil.PI;
+	val SLOW_RADIUS = MathUtil.PI;
+	val WANDER_CIRCLE_DISTANCE = 200000f;
+	val WANDER_CIRCLE_RADIUS = 100000f;
+	val WANDER_MAX_ROTATION = MathUtil.PI;
 	
 	on Initialize {
 		super._handle_Initialize_0(occurrence)
 		if (this.behaviorType == DynamicType::STEERING) {
-			this.seekBehaviour = new SteeringSeekBehaviour
-			this.fleeBehaviour = new SteeringFleeBehaviour
+			this.seekBehaviour = new SteeringSeekBehaviour;
+			this.fleeBehaviour = new SteeringFleeBehaviour;
 			this.wanderBehaviour = new SteeringWanderBehaviour(
 					WANDER_CIRCLE_DISTANCE, 
 					WANDER_CIRCLE_RADIUS, 
 					WANDER_MAX_ROTATION,
 					STOP_RADIUS,
-					SLOW_RADIUS)
+					SLOW_RADIUS);
 			this.watchAlert = new AlertBehaviour(60F);
 		}
 		else {
@@ -80,55 +81,28 @@ agent SecurityAgent extends AbstractAnimat {
 		
 	on PerceptionEvent {
 		var target = occurrence.perceptions.first
-		
-		
 		/*if (target === null) {*/
-		if(watchAlert.runAlert(occurrence.body.position,occurrence.perceptions)){
+		//if(watchAlert.runAlert(occurrence.body.position,occurrence.perceptions)){
+
+		if(target !== null){
+			if (target.name.equals("SCENE")
+				|| target.name.equals("Mouse Target")) {
+				
 			emitInfluence(
-				this.seekBehaviour.runSeek(
-					occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position
-				),
-				new TypeChangeInfluence("RAVENOUS")
-			)
-			print('je suis le mec');
-			//occurrence.body.setState(State.ALERTED)
-		}else{
-			emitInfluence(
-				this.wanderBehaviour.runWander(
-				occurrence.body.position,
-				occurrence.body.direction,
-				occurrence.body.currentLinearSpeed,
-				occurrence.body.maxLinear,
-				occurrence.body.currentAngularSpeed,
-				occurrence.body.maxAngular
-				),
-				new TypeChangeInfluence("BODY")
-			)
+						this.seekBehaviour.runSeek(
+							occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							target.position
+						),
+						new TypeChangeInfluence(State.CALM)
+					)
+				
+				
 			}
-		/*} else if (target.type == "TARGET") {
-			emitInfluence(
-				this.seekBehaviour.runSeek(
-					occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position
-				),
-				new TypeChangeInfluence("RAVENOUS")
-			)
-		} else {
-			emitInfluence(
-				this.fleeBehaviour.runFlee(
-					occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					target.position
-				),
-				new TypeChangeInfluence("SCARED")
-			)
-		}*/
+			else{
+		}
+	}
 	}
 
 }

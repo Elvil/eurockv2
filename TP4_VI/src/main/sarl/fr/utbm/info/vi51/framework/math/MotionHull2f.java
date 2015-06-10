@@ -112,6 +112,7 @@ public class MotionHull2f extends Shape2f<MotionHull2f> {
 			Rectangle2f r = (Rectangle2f) s;
 			Point2f end = this.start.clone();
 			end.add(this.direction);
+
 			Point2f pa = new Point2f(r.getLower().getX(), r.getUpper().getY());
 			Point2f pb = new Point2f(r.getUpper().getX(), r.getLower().getY());
 			float d1 = MathUtil.distanceSegmentToSegment(
@@ -123,7 +124,13 @@ public class MotionHull2f extends Shape2f<MotionHull2f> {
 			float d4 = MathUtil.distanceSegmentToSegment(
 					pb, r.getLower(), this.start, end);
 			float d = MathUtil.min(d1, d2, d3, d4);
+			
 			return d < this.size;
+			//boolean b = false;
+			/*return (r.getUpper().getX() < end.getX() && r.getUpper().getY() < end.getY() &&
+	                r.getLower().getX() > end.getX()  &&
+	                r.getLower().getY() > end.getY());*/
+			
 		}
 		if (s instanceof Circle2f) {
 			Circle2f c = (Circle2f) s;

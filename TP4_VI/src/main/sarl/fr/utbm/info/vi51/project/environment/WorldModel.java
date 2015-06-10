@@ -138,6 +138,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	 */
 	public void setMouseTarget(Point2f target) {
 		synchronized (this) {
+			if (this.mouseTarget == null)
+				mouseTarget = new MouseTarget(target.getX(), target.getY());
 			this.targetPosition = (target == null) ? null : target.clone();
 		}
 	}
@@ -153,15 +155,16 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		Frustum frustumAgent = agent.getFrustum();
 		
 		Shape2f<?> frustumShapde = frustumAgent.toShape(agent.getPosition(), agent.getDirection());
-		
-		Iterator it = dataStructure.dataIterator(frustumShapde);
+		if (mouseTarget != null)
+			shapedPercept.add(new Percept(mouseTarget));
+		/*Iterator it = dataStructure.dataIterator(frustumShapde);
 		
 		while(it.hasNext()){
 			obj = (SituatedObject) it.next();
-			if (!agent.getID().equals(obj.getID())) {
+			if (!agent.getID().equals(obj.getID()) && !(obj instanceof AgentBody)) {
 				shapedPercept.add(new Percept(obj));
 			}
-		}
+		}*/
 		
 		Iterator itImmobile = dataStructureImmobile.dataIterator(frustumShapde);
 		
@@ -194,7 +197,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				this.dataStructure.removeData(this.mouseTarget);
 				this.mouseTarget = null;
 				stateChanged();
-			} else if (influence instanceof TargetAdditionInfluence) {
+			}
+			else if (influence instanceof TargetAdditionInfluence) {
 				assert (this.mouseTarget == null);
 				TargetAdditionInfluence i = (TargetAdditionInfluence) influence;
 				this.mouseTarget = new MouseTarget(i.getPosition().getX(), i.getPosition().getY());
@@ -231,7 +235,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		IteratorData itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
 		
 		while(itImmobile.hasNext()){
-			actionTree.addData(new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(2,2), 0));
+			actionTree.addData(new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(0,0), 0));
 		}
 		
 		//
@@ -257,6 +261,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		}	
 		
 		// Detect conflicts
+		
+		
 		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(actionTree.getRoot());
 		while (iterator.hasNext()) {
 			QuadTreeNode node = iterator.next();
@@ -268,7 +274,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			for (int i = 0; i < influences.size(); ++i) {
 				SituatedArtifact inf1 = influences.get(i);
 				if (!inf1.isEmpty()) {
-					Shape2f<?> s1 = inf1.getShape();
+					Shape2f<?> s1 = inf1.getShape();	
 					for (SituatedObject obj : getAllObjects()) {
 						if ((!(obj instanceof AgentBody)) && (s1.intersects(obj.getShape()))) {
 							inf1.clear();
@@ -281,6 +287,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 							if (!inf2.isEmpty()) {
 								if (s1.intersects(inf2.getShape())) {
 									inf2.clear();
+									//break;
 								}
 							}
 						}
@@ -320,6 +327,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			}
 			influence = new RemoveInfluence(TARGET_ID);
 		} else if (this.mouseTarget != null) {
+			//influence = new TargetAdditionInfluence(TARGET_ID, target);
 			influence = new TeletransportInfluence(TARGET_ID, target);
 		} else {
 			influence = new TargetAdditionInfluence(TARGET_ID, target);
@@ -375,7 +383,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		AgentBody body = new AgentBody(
 				id,
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
-				3f,						// max linear speed m/s
+				7f,						// max linear speed m/s
 				.3f,						// max linear acceleration (m/s)/s
 				MathUtil.PI/3f,				// max angular speed r/s
 				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
@@ -387,9 +395,25 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				(float) Math.random() * MathUtil.TWO_PI);
 	}
 	
+	public void createSecurityAgent() {
+		UUID id = UUID.randomUUID();
+		AgentBody body = new AgentBody(
+				id,
+				new Circle2f(0f, 0f, RABBIT_SIZE), // body
+				7f,						// max linear speed m/s
+				.3f,						// max linear acceleration (m/s)/s
+				MathUtil.PI/3f,				// max angular speed r/s
+				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
+				new CircleFrustum(id, PERCEPTION_RADIUS));
+		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SECURITY_AGENT, getAgentBodyNumber() + 1));
+		addAgentBody(
+				body,
+				randomPosition(),
+				(float) Math.random() * MathUtil.TWO_PI);
+	}
 	/** Create the body of a Spectator.
 	 */
-	public void createSecurityAgent() {
+/*	public void createSecurityAgent() {
 		UUID id = UUID.randomUUID();
 		AgentBody body = new AgentBody(
 				id,
@@ -404,7 +428,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				body,
 				randomPosition(),
 				(float) Math.random() * MathUtil.TWO_PI);
-	}
+	}*/
 	
 
 	protected Point2f randomPosition() {
@@ -440,7 +464,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		private final MobileObject object;
 		private final Vector2f linearMotion;
 		private final float angularMotion;
-		private final MotionHull2f shape;
+		//private final MotionHull2f shape;
+		private final Shape2f shape;
 		private boolean cleared;
 		
 		/**
@@ -452,7 +477,11 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			this.object = object instanceof MobileObject ? (MobileObject) object : null;
 			this.linearMotion = linearMotion;
 			this.angularMotion = angularMotion;
-			this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
+			//this.shape = object.getPosition();
+			if (!(object instanceof AgentBody))
+				this.shape = object.getShape();
+			else
+				this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
 		}
 		
 		/*public SituatedArtifact(SituatedObject objectImmobile){

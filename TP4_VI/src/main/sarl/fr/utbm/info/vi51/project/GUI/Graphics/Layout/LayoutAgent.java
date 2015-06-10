@@ -36,7 +36,7 @@ public class LayoutAgent<C extends AbstractGraphicElement> extends AbstractLayou
 		while (true)
 		{
 			try {
-				Thread.sleep(30);
+				Thread.sleep(50);
 				synchronized(listComponents) {
 					Iterator i = listComponents.iterator(); 
 					while (i.hasNext())
