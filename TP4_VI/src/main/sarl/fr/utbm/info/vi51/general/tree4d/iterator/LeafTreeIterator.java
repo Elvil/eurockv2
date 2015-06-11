@@ -56,7 +56,7 @@ public class LeafTreeIterator implements Iterator<QuadTreeNode> {
 			if (candidate.isLeaf()) {
 				this.next = candidate;
 			} else {
-				for (QuadTreeNode child : candidate.getAllChildren()) {
+				for (QuadTreeNode child : candidate.getChildren()) {
 					this.stack.push(child);
 				}
 			}

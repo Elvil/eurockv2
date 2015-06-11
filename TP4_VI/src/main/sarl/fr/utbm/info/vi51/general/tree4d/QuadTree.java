@@ -6,6 +6,8 @@ import fr.utbm.info.vi51.framework.environment.ShapedObject;
 import fr.utbm.info.vi51.framework.environment.SpatialDataStructure;
 import fr.utbm.info.vi51.framework.math.Rectangle2f;
 import fr.utbm.info.vi51.framework.math.Shape2f;
+import fr.utbm.info.vi51.general.tree4d.iterator.FrustumIterator;
+import fr.utbm.info.vi51.general.tree4d.iterator.IteratorData;
 
 public class QuadTree <D extends ShapedObject> implements SpatialDataStructure<D>/*, Iterable<QuadTreeNode<D> > */ {
 
@@ -13,7 +15,7 @@ public class QuadTree <D extends ShapedObject> implements SpatialDataStructure<D
 	Iterator<QuadTreeNode<?>> it =  null;
 	
 	public QuadTree() {
-		
+		root = new QuadTreeNode<D>(null);
 	}
 	
 	
@@ -37,8 +39,7 @@ public class QuadTree <D extends ShapedObject> implements SpatialDataStructure<D
 	}
 
 	public Iterator dataIterator() {
-		//return new LeafTreeIterator(root);
-		return null;
+		return new IteratorData<D>(this);
 	}
 
 	public Iterable<D> getData() {
@@ -51,8 +52,7 @@ public class QuadTree <D extends ShapedObject> implements SpatialDataStructure<D
 	}
 
 	public Iterator<D> dataIterator(Shape2f<?> bounds) {
-		//return new FrustumCullerTreeIterator<D>(root, bounds);
-		return null;
+		return new FrustumIterator(this, bounds);
 	}
 
 	public void setRoot(QuadTreeNode<D> newRoot) {

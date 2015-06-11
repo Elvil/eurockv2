@@ -115,11 +115,14 @@ public class QuadTreeNode<D extends ShapedObject> {
 		if (lData.contains(rData) || this.getBounds().intersects(rData.getShape()))
 		{
 			lData.remove(rData);
-			
-			children[LEFTTOP].remove(rData);
-			children[RIGHTTOP].remove(rData);
-			children[LEFTBOTTOM].remove(rData);
-			children[RIGHTBOTTOM].remove(rData);		
+			if (children[LEFTTOP] != null)
+				children[LEFTTOP].remove(rData);
+			if (children[RIGHTTOP] != null)
+				children[RIGHTTOP].remove(rData);
+			if (children[LEFTBOTTOM] != null)
+				children[LEFTBOTTOM].remove(rData);
+			if (children[RIGHTBOTTOM] != null)
+				children[RIGHTBOTTOM].remove(rData);		
 		
 			return true;
 		}
