@@ -2,6 +2,7 @@ package fr.utbm.info.vi51.project.environment;
 
 import java.util.UUID;
 
+import fr.utbm.info.vi51.framework.environment.AbstractMobileObject;
 import fr.utbm.info.vi51.framework.environment.ImmobileObject;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Shape2f;
@@ -9,14 +10,16 @@ import fr.utbm.info.vi51.framework.math.Shape2f;
 
 public class BombObject extends ImmobileObject {
 
-	public float lifetime = 0;
-	public String type;
+
 	public BombObject(UUID id, Shape2f<?> shape, Point2f position, String name) {
 		super(id, shape, position, name);
-		type = Semantics.BOMB;
-		lifetime = 0;
 		// TODO Auto-generated constructor stub
+
+		lifetime = 0;
+		type = Semantics.BOMB;
 	}
+	public float lifetime = 0;
+	public String type;
 	public void update()
 	{
 
@@ -38,7 +41,5 @@ public class BombObject extends ImmobileObject {
 				type = Semantics.BOMBEXPLOSEE;
 			}
 		}
-		
-		
 	}
 }
