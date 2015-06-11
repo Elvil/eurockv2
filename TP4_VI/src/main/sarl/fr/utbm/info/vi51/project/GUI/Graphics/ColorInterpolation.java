@@ -5,9 +5,8 @@ import java.awt.Color;
 public class ColorInterpolation {
 	public static Color interpolation (Color x, Color y, float blending)
 	{
-		if (blending < 1) {
+		if (blending > 0 && blending < 1) {
 			float inverse_blending = 1 - blending;
-
 			float red =   x.getRed()   * blending   +   y.getRed()   * inverse_blending;
 			float green = x.getGreen() * blending   +   y.getGreen() * inverse_blending;
 			float blue =  x.getBlue()  * blending   +   y.getBlue()  * inverse_blending;

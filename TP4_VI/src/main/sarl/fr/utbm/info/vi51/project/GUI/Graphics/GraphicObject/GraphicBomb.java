@@ -1,4 +1,4 @@
-package fr.utbm.info.vi51.project.GUI.Graphics.GraphicBuilding;
+package fr.utbm.info.vi51.project.GUI.Graphics.GraphicObject;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -12,7 +12,7 @@ import fr.utbm.info.vi51.project.GUI.Graphics.ColorInterpolation;
 import fr.utbm.info.vi51.project.environment.BombObject;
 import fr.utbm.info.vi51.project.environment.Semantics;
 
-public class GraphicBomb extends AbstractGraphicBuilding {
+public class GraphicBomb extends AbstractGraphicObject {
 
 	public GraphicBomb(SituatedObject bomb) {
 		super(bomb);

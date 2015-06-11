@@ -107,10 +107,7 @@ public class QuadTreeNode<D extends ShapedObject> implements Serializable{
 					if (child != null && !(child.isLeaf() && child.getData().size() == 0)) {
 						drap =  false;
 					}
-				}
-			
-			
-			if(drap){
+				}if(drap){
 				for (int i = 0; i < this.getAllChildren().length; ++i) {
 					if (this.children[i] != null) {
 						this.children[i].setRoot(null);
@@ -119,14 +116,12 @@ public class QuadTreeNode<D extends ShapedObject> implements Serializable{
 				}
 				this.children = null;
 			}
-		
 		}
-		
 		return drap;
 	}
 	public boolean addData(D data){
 		// Constante -> nombre de data dans un noeud
-		// Si supÃ©rieur Ã  la constante alors on redispatch dans les children
+		// Si supérieur à la constante alors on redispatch dans les children
 		// Sinon on ajoute
 		if(this.isLeaf()){
 			if(this.getData() != null && this.getData().size() < totaleDataPerNode){
