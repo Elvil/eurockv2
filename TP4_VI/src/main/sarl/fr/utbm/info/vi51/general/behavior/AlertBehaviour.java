@@ -46,10 +46,31 @@ public class AlertBehaviour {
 		return false;
 	}
 
-	public Point2f searchTarget(String target, List<Percept> perceptions) {
-		for (Percept p : perceptions) {
-			if (p.getName().equals(target)) {
-				return p.getPosition();
+	public Point2f searchTarget(Percept body, List<Percept> perceptions) {
+
+		State state = (State) body.getType();
+		String target = null;
+		switch (state) {
+		case EATING:
+		case HUNGRY:
+			target = Semantics.STAND_MIAM;
+			break;
+
+		case ALERTED:
+			target = Semantics.BOMB;
+			break;
+
+		case SEARCH_WATCHING:
+		case WATCHING:
+			target = body.getWantToWatch();
+			break;
+		}
+
+		if (target != null) {
+			for (Percept p : perceptions) {
+				if (p.getName().equals(target)) {
+					return p.getPosition();
+				}
 			}
 		}
 		return new Point2f();

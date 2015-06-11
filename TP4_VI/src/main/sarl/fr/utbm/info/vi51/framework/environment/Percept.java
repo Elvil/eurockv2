@@ -45,6 +45,10 @@ public class Percept implements MobileObject, Serializable {
 	private Point2f position;
 	private final float angle;
 	private final Serializable type;
+	public String getWantToWatch() {
+		return wantToWatch;
+	}
+
 	private final float maxLinearSpeed;
 	private final float maxLinearAcceleration;
 	private Vector2f currentLinearMotion;
@@ -52,6 +56,7 @@ public class Percept implements MobileObject, Serializable {
 	private final float maxAngularAcceleration;
 	private final float currentAngularSpeed;
 	private final String name;
+	private final String wantToWatch;
 	
 	/**
 	 * @param perceivedObject is the perceived object.
@@ -96,8 +101,10 @@ public class Percept implements MobileObject, Serializable {
 		}
 		if (perceivedObject instanceof AgentBody) {
 			this.bodyId = ((AgentBody) perceivedObject).getID();
+			this.wantToWatch = ((AgentBody) perceivedObject).getWantToWatch();
 		} else {
 			this.bodyId = null;
+			this.wantToWatch = null;
 		}
 	}
 	

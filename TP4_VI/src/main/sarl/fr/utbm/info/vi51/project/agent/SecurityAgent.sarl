@@ -116,7 +116,7 @@ agent SecurityAgent extends AbstractAnimat {
 					boolWander = false;
 				}
 
-				if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE))
+				if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE_PLAGE))
 				{
 					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 					occurrence.body.currentLinearSpeed,

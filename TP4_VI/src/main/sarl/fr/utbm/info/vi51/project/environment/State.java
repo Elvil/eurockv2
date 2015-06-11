@@ -9,6 +9,7 @@ public enum State {
 	HUNGRY,
 	PLAYING,
 	DEFUSING,
-	SEARCH_WATCHING
+	SEARCH_WATCHING,
+	EATING
 	
 }

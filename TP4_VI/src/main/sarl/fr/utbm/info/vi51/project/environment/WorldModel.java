@@ -73,7 +73,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 
 	private final static float RABBIT_SIZE = 10f;
 	
-	private final static float PERCEPTION_RADIUS = 70f;
+	private final static float PERCEPTION_RADIUS = 190f;
 	
 	private final static UUID TARGET_ID = UUID.randomUUID();
 
@@ -388,8 +388,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				new Circle2f(0f, 0f, RABBIT_SIZE), // body
 				2f,						// max linear speed m/s
 				.4f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/2f,				// max angular speed r/s
-				MathUtil.PI/4f,			// max angular acceleration (r/s)/s
+				MathUtil.PI/1.5f,				// max angular speed r/s
+				MathUtil.PI/2f,			// max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
 		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SPECTATOR, getAgentBodyNumber() + 1));
 		addAgentBody(
@@ -563,12 +563,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		/** Clear the movement definition.
 		 */
 		public void clear() {
-			this.linearMotion.normalize();
-			this.linearMotion.negate();
+			//this.linearMotion.normalize();
+			//this.linearMotion.negate();
 			//this.linearMotion.setLength(this.linearMotion.length()/2);
 			//this.linearMotion.setOrientationAngle(this.linearMotion.getOrientationAngle()+5);
 			//this.cleared = true;
-			//this.linearMotion.set(new Vector2f());
+			this.linearMotion.set(new Vector2f());
 
 		}
 

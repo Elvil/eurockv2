@@ -83,49 +83,52 @@ agent spectator extends AbstractAnimat {
 		if(target !== null) {
 		//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
 			if(alertBehaviour.runAlert(occurrence.body, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED)) {
-				emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-				occurrence.body.currentLinearSpeed,
-				occurrence.body.maxLinear,
-				new Point2f(400, 0)),
-				new TypeChangeInfluence(State.ALERTED))
-				//print("on doit fuir ahah");
+
+				var targetPos = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
+				if(targetPos.getX == 0 || targetPos.getY == 0) {
+					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+					occurrence.body.currentLinearSpeed,
+					occurrence.body.maxLinear,
+					new Point2f(400, 0)),
+					new TypeChangeInfluence(State.ALERTED))
+				} else {
+					emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
+					occurrence.body.currentLinearSpeed,
+					occurrence.body.maxLinear,
+					targetPos),
+					new TypeChangeInfluence(State.ALERTED))
+				}
 				boolWander = false;
-			} else {
-				var targetPos = this.alertBehaviour.searchTarget(Semantics.STAND_MIAM, occurrence.perceptions)
+			}
+			else {
+				var targetPos = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
 				if(targetPos.getX != 0 || targetPos.getY != 0) {
-					if(occurrence.body.type == State.HUNGRY)
+					if(occurrence.body.type == State.HUNGRY || occurrence.body.type == State.EATING)
 					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
 						occurrence.body.maxLinear,
 						targetPos),
-						new TypeChangeInfluence(occurrence.body.type))
+						new TypeChangeInfluence(State.EATING))
 						boolWander = false;
 					}
 
-					if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE))
+					if(occurrence.body.type == State.SEARCH_WATCHING || occurrence.body.type == State.WATCHING )
 					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
 						occurrence.body.maxLinear,
-						target.position),
-						new TypeChangeInfluence(occurrence.body.type))
+						targetPos),
+						new TypeChangeInfluence(State.SEARCH_WATCHING))
 						boolWander = false;
+						//print("recherche de la scene \n");
 					}
 				}
 			}
 
 		}
-
 		if(boolWander) {
-			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
-			occurrence.body.direction,
-			occurrence.body.currentLinearSpeed,
-			occurrence.body.maxLinear,
-			occurrence.body.currentAngularSpeed,
-			occurrence.body.maxAngular),
-			new TypeChangeInfluence(occurrence.body.type))
+			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, occurrence.body.direction, occurrence.body.currentLinearSpeed, occurrence.body.maxLinear, occurrence.body.currentAngularSpeed, occurrence.body.maxAngular), new TypeChangeInfluence(occurrence.body.type))
 		}
 	}
-
 }

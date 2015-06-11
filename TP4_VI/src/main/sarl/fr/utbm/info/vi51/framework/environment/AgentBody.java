@@ -47,13 +47,21 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	private final Frustum frustum;
 	private int MaxMiam = 7000;
 	private int TimeToMiam = new Random().nextInt(7000);
-	private Semantics WantToWatch;
-	private int TimeToWatch = 1000;
-	private int TimePasserCommande=0;
+	private String WantToWatch =randomWantToWatch(Semantics.EXIT);
+	private int TimeToWatch = 4000 ; //new Random().nextInt(200);
+	private int TimePasserCommande = 0;
 
 	private transient MotionInfluence motionInfluence = null;
 	private transient List<Influence> otherInfluences = new ArrayList<>();
 	private transient List<Percept> perceptionss = new ArrayList<>();
+
+	public String getWantToWatch() {
+		return WantToWatch;
+	}
+
+	public void setWantToWatch(String wantToWatch) {
+		WantToWatch = wantToWatch;
+	}
 
 	/**
 	 * @param id
@@ -124,51 +132,82 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			TimeToMiam--;
 		}
 
-		if (!this.getPerceivedObjects().isEmpty())
-			if (getType().equals(State.HUNGRY)) {
-				if (searchTarget(Semantics.STAND_MIAM)) {
-					if (TimePasserCommande < 150) {
-						TimePasserCommande += 2;
-						//System.out.println("je me restaure");
-					} else {
-						//System.out.println("j'ai finis");
-						TimePasserCommande = 0;
-						TimeToMiam = randomGenerator.nextInt(5000);
-					}
-				}
-			}
-
-		if (!getType().equals(State.ALERTED)) {
+		if (!getType().equals(State.ALERTED) && !getType().equals(State.EATING)) {
 
 			if (TimeToMiam < (MaxMiam / 3)) {
 				setType(State.HUNGRY);
 			} else {
-				if (this.getType() == State.WATCHING) {
-					TimeToWatch--;
-				} else {
-					setType(State.SEARCH_WATCHING);
-				}
-
+				setType(State.SEARCH_WATCHING);
 			}
 
-		} else {
-			// System.out.println("J'ai peur");
+		}
+
+		if (getType().equals(State.EATING)) {
+			if (searchTarget(Semantics.STAND_MIAM)) {
+				if (TimePasserCommande < 150) {
+					TimePasserCommande += 2;
+				} else {
+					TimePasserCommande = 0;
+					TimeToMiam = randomGenerator.nextInt(7000);
+					setType(State.CALM);
+				}
+			}
+
+		}
+
+		if (getType().equals(State.HUNGRY)) {
+			// Nothing, il cherche un Stand de miam.
+		}
+
+		if (getType().equals(State.SEARCH_WATCHING)) {
+			//Nothing, il cherche une scene
+		}
+
+		if (getType().equals(State.SEARCH_WATCHING)) {
+			if (searchTarget(WantToWatch)) {
+				if (TimeToWatch >=0) {
+					TimeToWatch -= 10;
+				} else {
+					TimeToWatch = randomGenerator.nextInt(4000);
+					setWantToWatch(randomWantToWatch(getWantToWatch()));
+					setType(State.CALM);
+				}
+			}
 		}
 		
-		if (getType().equals(State.HUNGRY)) {
-			//System.out.println("j'ai faim");
-		}
 
 	}
 
 	private boolean searchTarget(String target) {
-		for (Percept p : this.getPerceivedObjects()) {
-			if (p.getName().equals(target))
-				return true;
+		if (!this.getPerceivedObjects().isEmpty()) {
+			for (Percept p : this.getPerceivedObjects()) {
+				if (p.getName().equals(target))
+					return true;
+			}
 		}
 		return false;
 	}
 
+	private String randomWantToWatch(String old){
+		String newWant = null;
+		Random rand = new Random();
+		int nbRand;
+		while(newWant == null){
+			nbRand = rand.nextInt(10);
+			if(nbRand < 3 && !Semantics.SCENE_LOGGIA.equals(old)){
+				newWant = Semantics.SCENE_LOGGIA;
+			}
+			if(nbRand > 3 && nbRand < 7 && !Semantics.SCENE_GRAND.equals(old)){
+				newWant = Semantics.SCENE_GRAND;
+			}
+			if(nbRand >= 7 && !Semantics.SCENE_PLAGE.equals(old)){
+				newWant = Semantics.SCENE_PLAGE;
+			}
+			System.out.println(newWant);
+		}
+		
+		return newWant;
+	}
 	/**
 	 * Invoked to send the given influence to the environment.
 	 *
