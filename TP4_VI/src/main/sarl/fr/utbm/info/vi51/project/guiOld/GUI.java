@@ -53,9 +53,9 @@ import fr.utbm.info.vi51.framework.math.Vector2f;
 import fr.utbm.info.vi51.framework.time.TimeManager;
 import fr.utbm.info.vi51.framework.util.LocalizedString;
 import fr.utbm.info.vi51.framework.util.Resources;
-import fr.utbm.info.vi51.general.tree.QuadTree;
-import fr.utbm.info.vi51.general.tree.QuadTreeNode;
-import fr.utbm.info.vi51.general.tree.iterator.IteratorAllNode;
+import fr.utbm.info.vi51.general.tree4d.QuadTree;
+import fr.utbm.info.vi51.general.tree4d.QuadTreeNode;
+import fr.utbm.info.vi51.general.tree4d.iterator.IteratorNode;
 import fr.utbm.info.vi51.project.MainProgram;
 import fr.utbm.info.vi51.project.environment.ExtendedWorldModelState;
 

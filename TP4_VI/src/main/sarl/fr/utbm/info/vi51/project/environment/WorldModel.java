@@ -57,11 +57,12 @@ import fr.utbm.info.vi51.framework.util.LocalizedString;
 import fr.utbm.info.vi51.general.frustum.CircleFrustum;
 import fr.utbm.info.vi51.general.influence.RemoveInfluence;
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence;
-import fr.utbm.info.vi51.general.tree.QuadTree;
-import fr.utbm.info.vi51.general.tree.QuadTreeNode;
-import fr.utbm.info.vi51.general.tree.iterator.IteratorAllNode;
-import fr.utbm.info.vi51.general.tree.iterator.IteratorData;
-import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
+import fr.utbm.info.vi51.general.tree4d.iterator.FrustumIterator;
+import fr.utbm.info.vi51.general.tree4d.iterator.IteratorData;
+import fr.utbm.info.vi51.general.tree4d.iterator.IteratorNode;
+import fr.utbm.info.vi51.general.tree4d.iterator.LeafTreeIterator;
+import fr.utbm.info.vi51.general.tree4d.QuadTree;
+import fr.utbm.info.vi51.general.tree4d.QuadTreeNode;
 
 /**
  * Model of the world.

@@ -18,13 +18,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * This program is free software; you can redistribute it and/or modify
  */
-package fr.utbm.info.vi51.general.tree.iterator;
+package fr.utbm.info.vi51.general.tree4d.iterator;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
-import fr.utbm.info.vi51.general.tree.QuadTreeNode;
+import fr.utbm.info.vi51.general.tree4d.QuadTreeNode;
 
 
 /**

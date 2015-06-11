@@ -1,22 +1,22 @@
-package fr.utbm.info.vi51.general.tree.iterator;
+package fr.utbm.info.vi51.general.tree4d.iterator;
 
 import java.util.Iterator;
 import java.util.Stack;
 
 import fr.utbm.info.vi51.framework.environment.ShapedObject;
 import fr.utbm.info.vi51.framework.math.Shape2f;
-import fr.utbm.info.vi51.general.tree.QuadTree;
-import fr.utbm.info.vi51.general.tree.QuadTreeNode;
-import fr.utbm.info.vi51.general.tree.iterator.IteratorAllNode;
+import fr.utbm.info.vi51.general.tree4d.QuadTree;
+import fr.utbm.info.vi51.general.tree4d.QuadTreeNode;
+import fr.utbm.info.vi51.general.tree4d.iterator.IteratorNode;
 
-public class iteratorRemoveData<D extends ShapedObject> implements Iterator<D>{
+public class IteratorRemoveData<D extends ShapedObject> implements Iterator<D>{
 	
-	private IteratorAllNode<D> iterateData;
+	private IteratorNode<D> iterateData;
 	private Stack<D> stack = new Stack<D>();
 	private D boundsFrustum;
 	
-	public iteratorRemoveData(QuadTree<D> root,D bounds) {
-		iterateData = new IteratorAllNode<D>(root);
+	public IteratorRemoveData(QuadTree<D> root,D bounds) {
+		iterateData = new IteratorNode<D>(root);
 		this.boundsFrustum = bounds;
 		searchNext();
 	}
@@ -76,3 +76,4 @@ public class iteratorRemoveData<D extends ShapedObject> implements Iterator<D>{
 	}
 	
 }
+
