@@ -10,11 +10,10 @@ import fr.utbm.info.vi51.framework.math.Shape2f;
 
 public class BombObject extends ImmobileObject {
 
-
+	public static float RAYON = 50.0f;
 	public BombObject(UUID id, Shape2f<?> shape, Point2f position, String name) {
 		super(id, shape, position, name);
 		// TODO Auto-generated constructor stub
-
 		lifetime = 0;
 		type = Semantics.BOMB;
 	}
@@ -26,7 +25,7 @@ public class BombObject extends ImmobileObject {
 		if (type.equals(Semantics.BOMB))
 		{
 			lifetime += 0.05f;
-			if (lifetime >= 1)
+			if (lifetime > 1)
 			{
 				lifetime = 0;
 				type = Semantics.EXPLOSION;
