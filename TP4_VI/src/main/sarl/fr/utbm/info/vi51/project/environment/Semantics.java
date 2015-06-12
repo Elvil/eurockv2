@@ -13,6 +13,9 @@ public class Semantics {
 */
 	public final static String SPECTATOR = "SPECTATOR";
 	public final static String BOMB = "BOMB";
+	public final static String BOMBEXPLOSEE = "BOMBEXPLOSEE";
+	public final static String EXPLOSION = "EXPLOSION";
+	public final static String DEAD = "DEAD";
 	
 	public final static String ARTIST = "ARTIST";
 	public final static String SCENE = "SCENE";
