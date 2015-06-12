@@ -135,7 +135,7 @@ agent spectator extends AbstractAnimat {
 						occurrence.body.currentLinearSpeed,
 						occurrence.body.maxLinear,
 						targetclame.getPosition()),
-						new TypeChangeInfluence(State.SEARCH_WATCHING))
+						new TypeChangeInfluence(State.WATCHING))
 						boolWander = false;
 						//print("recherche de la scene \n");
 

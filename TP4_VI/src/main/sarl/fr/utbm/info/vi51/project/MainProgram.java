@@ -27,7 +27,7 @@ public class MainProgram {
 	private static float WORLD_SIZE_X = 700;
 	private static float WORLD_SIZE_Y = 700;
 	private static int NUMBER_ARTIST = 0;
-	private static int NUMBER_SPECTATOR = 150;
+	private static int NUMBER_SPECTATOR = 200;
 	private static int NUMBER_SECURITYAGENT = 10;
 
 	/** Main program.

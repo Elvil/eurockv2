@@ -137,6 +137,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			if (TimeToMiam < (MaxMiam / 3)) {
 				setType(State.HUNGRY);
 			} else {
+				if(!getType().equals(State.WATCHING))
 				setType(State.SEARCH_WATCHING);
 			}
 
@@ -144,7 +145,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 
 		if (getType().equals(State.EATING)) {
 			if (searchTarget(Semantics.STAND_MIAM)) {
-				if (TimePasserCommande < 150) {
+				if (TimePasserCommande < 750) {
 					TimePasserCommande += 2;
 				} else {
 					TimePasserCommande = 0;
