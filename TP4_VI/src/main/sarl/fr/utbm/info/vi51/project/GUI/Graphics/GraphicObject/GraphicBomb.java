@@ -23,14 +23,13 @@ public class GraphicBomb extends AbstractGraphicObject {
 	public void draw(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
 		BombObject bomb = (BombObject) this.object;
-		bomb.update();
 		if (bomb.type.equals(Semantics.BOMB))
 		{
-			g2d.setColor(Color.red);
+			g2d.setColor(Color.darkGray);
 			g2d.fill(this.shp);
 			
 			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.green, bomb.lifetime));
-			g2d.fillRect((int)this.shp.getBounds().getMinX()+10, (int) this.shp.getBounds().getMinY()-4, 3 , (int) (this.shp.getBounds().getHeight()+4 * bomb.lifetime));
+			g2d.fillRect((int)(this.shp.getBounds().getMinX() - (4* this.shp.getBounds().getWidth())/2), (int) (this.shp.getBounds().getMinY()+this.shp.getBounds().getHeight()), 4 * (int) (this.shp.getBounds().getWidth() * bomb.lifetime), 5);
 		}
 		if (bomb.type.equals(Semantics.EXPLOSION))
 		{
@@ -41,11 +40,12 @@ public class GraphicBomb extends AbstractGraphicObject {
 		{
 
 			Color w = new Color(0,0,0,0);
-	        Paint p = new RadialGradientPaint(new Point2D.Double(
+	        Color gr = new Color (200, 200, 200, 200);
+			Paint p = new RadialGradientPaint(new Point2D.Double(
 	        		this.shp.getBounds().getMinX() - 50*bomb.lifetime,
 	        		this.shp.getBounds().getMinY() - 50*bomb.lifetime), 50,
 	                new float[] { 0.0f, 1.0f },
-	                new Color[] { Color.darkGray, w});
+	                new Color[] {gr , w});
 	        g2d.setPaint(p);
 //			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.yellow, bomb.lifetime));
 			g2d.fillOval((int)(this.shp.getBounds().getMinX() - 50), (int)(this.shp.getBounds().getMinY() - 50), 100, 100);
