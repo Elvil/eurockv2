@@ -25,8 +25,6 @@ public class SecurityBehaviour {
 			if (!perceptions.isEmpty()) {
 
 				for (Percept p : perceptions) {
-					// Change the state of the agents present in the alert
-					// circle
 					if (position.distance(p.getPosition()) < RADIUS_ALERT) {
 						if (p.getName().equals(Semantics.BOMB)) {
 							bombeTrouver = true;
@@ -43,6 +41,21 @@ public class SecurityBehaviour {
 		return false;
 	}
 
+	public Point2f fleeAgent(Point2f position, List<Percept> perceptions) {
+
+		if (FollowBombeOrSpec) {
+			return savePosBomb;
+		} else {
+			for (Percept p : perceptions) {
+				if (p.getName().equals(Semantics.SECURITY_AGENT)
+						&& p.getType().equals(State.ALERTED_OUT)) {
+					return p.getPosition();
+				}
+			}
+		}
+		return new Point2f();
+	}
+
 	public Point2f followAgent(Point2f position, List<Percept> perceptions) {
 
 		if (FollowBombeOrSpec) {
@@ -55,7 +68,6 @@ public class SecurityBehaviour {
 				}
 			}
 		}
-
 		return new Point2f();
 	}
 

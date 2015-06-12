@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,11 +54,11 @@ import fr.utbm.info.vi51.framework.time.StepTimeManager;
 import fr.utbm.info.vi51.framework.time.TimeManager;
 import fr.utbm.info.vi51.framework.util.LocalizedString;
 import fr.utbm.info.vi51.general.frustum.CircleFrustum;
+import fr.utbm.info.vi51.general.influence.NullInfluence;
 import fr.utbm.info.vi51.general.influence.RemoveInfluence;
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence;
 import fr.utbm.info.vi51.general.tree.QuadTree;
 import fr.utbm.info.vi51.general.tree.QuadTreeNode;
-import fr.utbm.info.vi51.general.tree.iterator.IteratorAllNode;
 import fr.utbm.info.vi51.general.tree.iterator.IteratorData;
 import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
 
@@ -71,7 +70,7 @@ import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
  */
 public class WorldModel extends AbstractEnvironment implements WorldModelStateProvider {
 
-	private final static float RABBIT_SIZE = 10f;
+	private final static float AGENT_SIZE = 10f;
 	
 	private final static float PERCEPTION_RADIUS = 400f;
 	
@@ -224,11 +223,26 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				if (id != null) {
 					AgentBody body = getAgentBodyFor(id);
 					if (body != null) {
+						if (i.getType().equals(State.DEAD))
+						{
+							move(body, new Vector2f(0,0), 0);
+							this.dataStructure.removeData(body);
+							body.setType(i.getType());
+							/*ImmobileObject im = new ImmobileObject(UUID.randomUUID(), body.getShape(), body.getPosition(), Semantics.DEAD);
+							im.setName(Semantics.DEAD);
+							im.setType(Semantics.DEAD);
+							this.dataStructureImmobile.addData(im);
+							Window.getInstance().addBuilding(GraphicObjectFactory.getInstance(im));*/
+						}
 						body.setType(i.getType());
 					}
 				}
 				stateChanged();
 			}
+			 else if (influence instanceof NullInfluence)
+				{
+					stateChanged();
+				}
 		}
 		
 		// ADD IMMOBILIE OBJECT
@@ -240,6 +254,21 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			actionTree.addData(addr);
 			//System.out.println(addr.getShape());
 		}
+		ImmobileObject tObj;
+		itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
+		while(itImmobile.hasNext()){
+			tObj = (ImmobileObject)itImmobile.next();
+			if (tObj.getName().equals(Semantics.BOMB) || tObj.getName().equals(Semantics.BOMBEXPLOSEE) || tObj.getName().equals(Semantics.EXPLOSION))
+			{
+				ImmobileObject objTemp = tObj;
+				((BombObject)objTemp).update();
+				objTemp.setName(((BombObject)tObj).type);
+				dataStructureImmobile.removeData(tObj);
+				if (!tObj.getName().equals(Semantics.BOMBEXPLOSEE))
+					dataStructureImmobile.addData(objTemp);
+			}
+		}
+		
 		
 		//this.displayTree(actionTree);
 		
@@ -316,6 +345,14 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		}
 	}
 
+	public void addImmobileObject(SituatedObject obj)
+	{
+		dataStructureImmobile.addData(obj);
+	}
+	public void removeImmobileObject(SituatedObject obj)
+	{
+		dataStructureImmobile.removeData(obj);
+	}
 	@Override
 	public Iterable<SituatedObject> getAllObjects() {
 		return this.dataStructure.getData();
@@ -350,7 +387,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		UUID id = UUID.randomUUID();
 		AgentBody body = new AgentBody(
 				id,
-				new Circle2f(0f, 0f, RABBIT_SIZE), // body
+				new Circle2f(0f, 0f, AGENT_SIZE), // body
 				5f,						// max linear speed m/s
 				.5f,						// max linear acceleration (m/s)/s
 				MathUtil.PI/4f,				// max angular speed r/s
@@ -369,7 +406,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		UUID id = UUID.randomUUID();
 		AgentBody body = new AgentBody(
 				id,
-				new Circle2f(0f, 0f, RABBIT_SIZE), // body
+				new Circle2f(0f, 0f, AGENT_SIZE), // body
 				1f,						// max linear speed m/s
 				.4f,						// max linear acceleration (m/s)/s
 				MathUtil.PI/3f,				// max angular speed r/s
@@ -389,7 +426,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		UUID id = UUID.randomUUID();
 		AgentBody body = new AgentBody(
 				id,
-				new Circle2f(0f, 0f, RABBIT_SIZE), // body
+				new Circle2f(0f, 0f, AGENT_SIZE), // body
 				2f,						// max linear speed m/s
 				.4f,						// max linear acceleration (m/s)/s
 				MathUtil.PI/1.5f,				// max angular speed r/s
@@ -409,7 +446,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		UUID id = UUID.randomUUID();
 		AgentBody body = new AgentBody(
 				id,
-				new Circle2f(0f, 0f, RABBIT_SIZE), // body
+				new Circle2f(0f, 0f, AGENT_SIZE), // body
 				2f,						// max linear speed m/s
 				.5f,						// max linear acceleration (m/s)/s
 				MathUtil.PI/2f,				// max angular speed r/s
@@ -429,8 +466,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		float y = 1;
 		SituatedObject obj = null;
 		while(search){
-			x = (float) Math.random() * getWidth() - RABBIT_SIZE;
-			y = (float) Math.random() * getHeight() - RABBIT_SIZE;
+			x = (float) Math.random() * getWidth() - AGENT_SIZE;
+			y = (float) Math.random() * getHeight() - AGENT_SIZE;
 			Rectangle2f position = new Rectangle2f(new Point2f(x-1,y-1), new Point2f(x+1,y+1));
 			Iterator itImmobile = dataStructureImmobile.dataIterator(position);
 			
@@ -585,5 +622,4 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		}
 
 	}
-	
 }

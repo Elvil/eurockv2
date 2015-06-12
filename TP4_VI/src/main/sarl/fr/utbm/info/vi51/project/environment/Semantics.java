@@ -13,12 +13,13 @@ public class Semantics {
 */
 	public final static String SPECTATOR = "SPECTATOR";
 	public final static String BOMB = "BOMB";
+	public final static String BOMBEXPLOSEE = "BOMBEXPLOSEE";
+	public final static String EXPLOSION = "EXPLOSION";
+	public final static String DEAD = "DEAD";
 	
 	public final static String ARTIST = "ARTIST";
-	public final static String SCENE_PLAGE = "SCENEPLAGE";
-	public final static String SCENE_LOGGIA = "SCENELOGGIA";
-	public final static String SCENE_GRAND = "SCENEGRAND";
-			
+	public final static String SCENE = "SCENE";
+	
 	public final static String STAND_MIAM = "STANDMIAM";
 	public final static String STAND_BOIRE = "STANDBOIRE";
 	
@@ -27,4 +28,7 @@ public class Semantics {
 	
 	public final static String SECURITY_AGENT = "SECURITYAGENT";
 	
+	public final static String SCENE_LOGGIA = "SCENELOGGIA";
+	public final static String SCENE_GRAND = "SCENEGRANDE";
+	public final static String SCENE_PLAGE = "SCENEPLAGE";
 }

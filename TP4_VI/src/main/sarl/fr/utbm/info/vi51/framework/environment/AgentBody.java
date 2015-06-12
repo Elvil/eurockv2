@@ -124,63 +124,62 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	}
 
 	public void liveBody() {
+		if (!this.getType().equals(State.DEAD)){
+			Random randomGenerator = new Random();
 
-		Random randomGenerator = new Random();
-
-		// All the time
-		if (TimeToMiam > 0) {
-			TimeToMiam--;
-		}
-
-		if (!getType().equals(State.ALERTED_OUT) && !getType().equals(State.ALERTED) && !getType().equals(State.EATING)) {
-
-			if (TimeToMiam < (MaxMiam / 3)) {
-				setType(State.HUNGRY);
-			} else {
-				if(!getType().equals(State.WATCHING))
-				setType(State.SEARCH_WATCHING);
+			// All the time
+			if (TimeToMiam > 0) {
+				TimeToMiam--;
 			}
 
-		}
+			if (!getType().equals(State.ALERTED_OUT) && !getType().equals(State.ALERTED) && !getType().equals(State.EATING)) {
 
-		if (getType().equals(State.EATING)) {
-			if (searchTarget(Semantics.STAND_MIAM)) {
-				if (TimePasserCommande < 750) {
-					TimePasserCommande += 2;
+				if (TimeToMiam < (MaxMiam / 3)) {
+					setType(State.HUNGRY);
 				} else {
-					TimePasserCommande = 0;
-					TimeToMiam = randomGenerator.nextInt(7000);
-					setType(State.CALM);
+					if(!getType().equals(State.WATCHING))
+						setType(State.SEARCH_WATCHING);
+				}
+
+			}
+
+			if (getType().equals(State.EATING)) {
+				if (searchTarget(Semantics.STAND_MIAM)) {
+					if (TimePasserCommande < 750) {
+						TimePasserCommande += 2;
+					} else {
+						TimePasserCommande = 0;
+						TimeToMiam = randomGenerator.nextInt(7000);
+						setType(State.CALM);
+					}
+				}
+
+			}
+
+			if (getType().equals(State.HUNGRY)) {
+				// Nothing, il cherche un Stand de miam.
+			}
+
+			if (getType().equals(State.SEARCH_WATCHING)) {
+				//Nothing, il cherche une scene
+			}
+
+			if (getType().equals(State.ALERTED_OUT)) {
+				//System.out.println("Je suis en alerte wesh");
+			}
+
+			if (getType().equals(State.SEARCH_WATCHING)) {
+				if (searchTarget(WantToWatch)) {
+					if (TimeToWatch >=0) {
+						TimeToWatch -= 10;
+					} else {
+						TimeToWatch = randomGenerator.nextInt(10000);
+						setWantToWatch(randomWantToWatch(getWantToWatch()));
+						setType(State.CALM);
+					}
 				}
 			}
-
 		}
-
-		if (getType().equals(State.HUNGRY)) {
-			// Nothing, il cherche un Stand de miam.
-		}
-
-		if (getType().equals(State.SEARCH_WATCHING)) {
-			//Nothing, il cherche une scene
-		}
-		
-		if (getType().equals(State.ALERTED_OUT)) {
-			//System.out.println("Je suis en alerte wesh");
-		}
-
-		if (getType().equals(State.SEARCH_WATCHING)) {
-			if (searchTarget(WantToWatch)) {
-				if (TimeToWatch >=0) {
-					TimeToWatch -= 10;
-				} else {
-					TimeToWatch = randomGenerator.nextInt(10000);
-					setWantToWatch(randomWantToWatch(getWantToWatch()));
-					setType(State.CALM);
-				}
-			}
-		}
-		
-
 	}
 
 	private boolean searchTarget(String target) {
@@ -210,7 +209,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			}
 			//System.out.println(newWant);
 		}
-		
+
 		return newWant;
 	}
 	/**

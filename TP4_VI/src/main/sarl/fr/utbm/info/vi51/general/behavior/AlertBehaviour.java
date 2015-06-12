@@ -27,18 +27,13 @@ public class AlertBehaviour {
 					// Change the state of the agents present in the alert
 					// circle
 					if (position.distance(p.getPosition()) < RADIUS_ALERT) {
-						// System.out.println("getName" + p.getName());
-						// System.out.println("getType" + p.getType());
 						if (p.getType().equals(State.ALERTED_OUT)
 								&& p.getName().equals(Semantics.SECURITY_AGENT)) {
-							// System.out.println("tu passes en alerted_out wesh");
 							return State.ALERTED_OUT;
 						}
 
-						if (body.getType().equals(State.ALERTED)) {
-
+						if (body.getType().equals(State.ALERTED) || p.getType().equals(State.DEAD)) {
 							return State.ALERTED;
-
 						}
 
 						if (p.getType().equals(State.ALERTED)
@@ -51,9 +46,6 @@ public class AlertBehaviour {
 								return State.ALERTED_OUT;
 							}
 						}
-
-						// return State.ALERTED;
-
 					}
 				}
 			}
@@ -68,6 +60,25 @@ public class AlertBehaviour {
 		 */
 
 		return null;
+	}
+	public Point2f getExit(Percept body, List<Percept> perceptions)
+	{
+		Point2f position = body.getPosition();
+
+		if (!body.getType().equals(State.ALERTED_OUT)) {
+			if (!perceptions.isEmpty()) {
+
+				for (Percept p : perceptions) {
+					if (position.distance(p.getPosition()) < RADIUS_ALERT) {
+						if (p.getType().equals(Semantics.EXIT)) {
+							System.out.println("J'ai vu la sortie");
+							return p.getPosition();
+						}
+					}
+				}
+			}
+		}
+		return new Point2f(-1,-1);
 	}
 
 	public Percept searchTarget(Percept body, List<Percept> perceptions) {
@@ -84,13 +95,11 @@ public class AlertBehaviour {
 			target = Semantics.BOMB;
 			break;
 		case ALERTED_OUT:
-			if (target != null) {
 				for (Percept p : perceptions) {
 					if (!p.getName().equals(Semantics.SPECTATOR) && !p.getName().equals(Semantics.SECURITY_AGENT) ) {
 						return p;
 					}
 				}
-			}
 			break;
 
 		case SEARCH_WATCHING:

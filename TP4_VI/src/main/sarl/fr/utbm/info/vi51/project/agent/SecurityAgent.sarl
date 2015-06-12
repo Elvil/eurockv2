@@ -26,7 +26,10 @@ import fr.utbm.info.vi51.framework.environment.DynamicType
 import fr.utbm.info.vi51.framework.environment.PerceptionEvent
 import fr.utbm.info.vi51.framework.environment.SimulationAgentReady
 import fr.utbm.info.vi51.framework.math.MathUtil
+import fr.utbm.info.vi51.framework.math.Point2f
 import fr.utbm.info.vi51.general.^behavior.FleeBehaviour
+import fr.utbm.info.vi51.general.^behavior.LiveBehaviour
+import fr.utbm.info.vi51.general.^behavior.SecurityBehaviour
 import fr.utbm.info.vi51.general.^behavior.SeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.WanderBehaviour
 import fr.utbm.info.vi51.general.^behavior.kinematic.KinematicFleeBehaviour
@@ -35,15 +38,13 @@ import fr.utbm.info.vi51.general.^behavior.kinematic.KinematicWanderBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringFleeBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringSeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringWanderBehaviour
+import fr.utbm.info.vi51.general.influence.NullInfluence
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence
+import fr.utbm.info.vi51.project.environment.Semantics
 import fr.utbm.info.vi51.project.environment.State
-import fr.utbm.info.vi51.project.environment.TestInfluence
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
-import fr.utbm.info.vi51.framework.math.Point2f
-import fr.utbm.info.vi51.project.environment.Semantics ;
-import fr.utbm.info.vi51.general.^behavior.SecurityBehaviour
 
 agent SecurityAgent extends AbstractAnimat {
 	uses PhysicEnvironment, Lifecycle, DefaultContextInteractions
@@ -51,6 +52,8 @@ agent SecurityAgent extends AbstractAnimat {
 	var fleeBehaviour : FleeBehaviour ;
 	var wanderBehaviour : WanderBehaviour ;
 	var securityAlert : SecurityBehaviour ;
+	var liveBehaviour : LiveBehaviour
+	var isAlive = true
 	val STOP_RADIUS = MathUtil.PI / 8f
 	val SLOW_RADIUS = MathUtil.PI / 2f
 	val WANDER_CIRCLE_DISTANCE = 20f
@@ -72,23 +75,29 @@ agent SecurityAgent extends AbstractAnimat {
 		else {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
 		}
+		this.liveBehaviour = new LiveBehaviour();
 		emit(new SimulationAgentReady)
 	}
 
 	on PerceptionEvent {
-
+if (isAlive)
+		{
+			isAlive = this.liveBehaviour.isAlive(occurrence.body.position, occurrence.perceptions);
+		if (isAlive)
+		{
 		var target = occurrence.perceptions.first
 		var boolWander = true;
 		var posBomb : Point2f;
-
+		var positionCopain : Point2f;
 		if(target !== null) {
 		//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
 			if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED_OUT) || securityAlert.getBombFind ) {
 				posBomb = this.securityAlert.followAgent(occurrence.body.position, occurrence.perceptions)
+				positionCopain = this.securityAlert.fleeAgent(occurrence.body.position, occurrence.perceptions);
 				if(posBomb.getX() != 0) {
 					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
+					occurrence.body.maxLinearSpeed,
 					posBomb),
 					new TypeChangeInfluence(State.ALERTED_OUT))
 				} else
@@ -96,13 +105,12 @@ agent SecurityAgent extends AbstractAnimat {
 					emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
 					occurrence.body.direction,
 					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
+					occurrence.body.maxLinearSpeed,
 					occurrence.body.currentAngularSpeed,
-					occurrence.body.maxAngular),
+					occurrence.body.maxAngularSpeed),
 					new TypeChangeInfluence(State.ALERTED_OUT))
 				}
 				boolWander = false;
-				//print("bombe detected");
 			}
 			else {
 
@@ -110,7 +118,7 @@ agent SecurityAgent extends AbstractAnimat {
 				{
 					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
+					occurrence.body.maxLinearSpeed,
 					target.position),
 					new TypeChangeInfluence(occurrence.body.type))
 					boolWander = false;
@@ -120,7 +128,7 @@ agent SecurityAgent extends AbstractAnimat {
 				{
 					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
+					occurrence.body.maxLinearSpeed,
 					target.position),
 					new TypeChangeInfluence(occurrence.body.type))
 					boolWander = false;
@@ -134,14 +142,27 @@ agent SecurityAgent extends AbstractAnimat {
 			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
 			occurrence.body.direction,
 			occurrence.body.currentLinearSpeed,
-			occurrence.body.maxLinear,
+			occurrence.body.maxLinearSpeed,
 			occurrence.body.currentAngularSpeed,
-			occurrence.body.maxAngular),
+			occurrence.body.maxAngularSpeed),
 			new TypeChangeInfluence(occurrence.body.type))
-			//print("je fais un wander \n");
 
 		}
-
 	}
-
+		else
+		{
+			print("Mort \n")
+				emitInfluence(null, new NullInfluence())
+			if (!occurrence.body.type.equals(State.DEAD))
+				emitInfluence(null, new TypeChangeInfluence(State.DEAD))	
+		}
+	}
+	else
+	{
+			if (!occurrence.body.type.equals(State.DEAD))
+				emitInfluence(null, new TypeChangeInfluence(State.DEAD))	
+			emitInfluence(null, new NullInfluence())
+		
+	}
+	}
 }

@@ -27,7 +27,7 @@ public class MainProgram {
 	private static float WORLD_SIZE_X = 700;
 	private static float WORLD_SIZE_Y = 700;
 	private static int NUMBER_ARTIST = 0;
-	private static int NUMBER_SPECTATOR = 200;
+	private static int NUMBER_SPECTATOR = 100;
 	private static int NUMBER_SECURITYAGENT = 10;
 
 	/** Main program.
@@ -54,6 +54,8 @@ public class MainProgram {
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(5, 5), new Point2f(100, 100)), new Point2f(50,550), Semantics.SCENE_LOGGIA));
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,50), Semantics.SCENE_PLAGE));
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,550), Semantics.STAND_MIAM));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(10, 100)), new Point2f(790,550), Semantics.EXIT));
+		
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,400), Semantics.SCENE));
 		environment.setImmobileObject(listIm);
 		

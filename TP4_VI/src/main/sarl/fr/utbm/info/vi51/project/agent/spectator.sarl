@@ -26,7 +26,10 @@ import fr.utbm.info.vi51.framework.environment.DynamicType
 import fr.utbm.info.vi51.framework.environment.PerceptionEvent
 import fr.utbm.info.vi51.framework.environment.SimulationAgentReady
 import fr.utbm.info.vi51.framework.math.MathUtil
+import fr.utbm.info.vi51.framework.math.Point2f
+import fr.utbm.info.vi51.general.^behavior.AlertBehaviour
 import fr.utbm.info.vi51.general.^behavior.FleeBehaviour
+import fr.utbm.info.vi51.general.^behavior.LiveBehaviour
 import fr.utbm.info.vi51.general.^behavior.SeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.WanderBehaviour
 import fr.utbm.info.vi51.general.^behavior.kinematic.KinematicFleeBehaviour
@@ -35,16 +38,12 @@ import fr.utbm.info.vi51.general.^behavior.kinematic.KinematicWanderBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringFleeBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringSeekBehaviour
 import fr.utbm.info.vi51.general.^behavior.steering.SteeringWanderBehaviour
+import fr.utbm.info.vi51.general.influence.NullInfluence
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence
 import fr.utbm.info.vi51.project.environment.State
-import fr.utbm.info.vi51.project.environment.TestInfluence
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
-import fr.utbm.info.vi51.project.environment.State ;
-import fr.utbm.info.vi51.project.environment.Semantics ;
-import fr.utbm.info.vi51.general.^behavior.AlertBehaviour
-import fr.utbm.info.vi51.framework.math.Point2f
 
 agent spectator extends AbstractAnimat {
 	uses PhysicEnvironment, Lifecycle, DefaultContextInteractions
@@ -52,6 +51,9 @@ agent spectator extends AbstractAnimat {
 	var fleeBehaviour : FleeBehaviour
 	var wanderBehaviour : WanderBehaviour
 	var alertBehaviour : AlertBehaviour
+	var liveBehaviour : LiveBehaviour
+	var isAlive = true;
+	var positionExit = null;
 	val STOP_RADIUS = MathUtil.PI / 8f
 	val SLOW_RADIUS = MathUtil.PI / 2f
 	val WANDER_CIRCLE_DISTANCE = 20f
@@ -73,14 +75,22 @@ agent spectator extends AbstractAnimat {
 		else {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
 		}
+		this.liveBehaviour = new LiveBehaviour();
 		emit(new SimulationAgentReady)
 	}
 
 	on PerceptionEvent {
+		if (isAlive)
+		{
+			isAlive = this.liveBehaviour.isAlive(occurrence.body.position, occurrence.perceptions);
+		if (isAlive)
+		{
+			
 		var target = occurrence.perceptions.first
 		var boolWander = true;
 		var stateFind = alertBehaviour.runAlert(occurrence.body, occurrence.perceptions);
-
+		if (this.positionExit == null || this.positionExit == (new Point2f(-1,-1)))
+			this.positionExit = alertBehaviour.getExit(occurrence.body, occurrence.perceptions)
 		if(target !== null) {
 		//EN stateFind il trouve ALERTED_OUT ou ALERTED
 			if(stateFind != null) {
@@ -91,13 +101,13 @@ agent spectator extends AbstractAnimat {
 					if(targetPos == null) {
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
-						occurrence.body.maxLinear,
+						occurrence.body.maxLinearSpeed,
 						new Point2f(400, 0)),
 						new TypeChangeInfluence(stateFind))
 					} else {
 						emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
-						occurrence.body.maxLinear,
+						occurrence.body.maxLinearSpeed,
 						targetPos.getPosition()),
 						new TypeChangeInfluence(stateFind))
 						//print("je veux esquiver ça : " + targetPos.getName() + "\n")
@@ -108,9 +118,9 @@ agent spectator extends AbstractAnimat {
 					emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, 
 						occurrence.body.direction, 
 						occurrence.body.currentLinearSpeed, 
-						occurrence.body.maxLinear, 
+						occurrence.body.maxLinearSpeed, 
 						occurrence.body.currentAngularSpeed, 
-						occurrence.body.maxAngular
+						occurrence.body.maxAngularSpeed
 					), new TypeChangeInfluence(State.ALERTED))
 				}
 
@@ -123,7 +133,7 @@ agent spectator extends AbstractAnimat {
 					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
-						occurrence.body.maxLinear,
+						occurrence.body.maxLinearSpeed,
 						targetclame.getPosition()),
 						new TypeChangeInfluence(State.EATING))
 						boolWander = false;
@@ -133,7 +143,7 @@ agent spectator extends AbstractAnimat {
 					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
-						occurrence.body.maxLinear,
+						occurrence.body.maxLinearSpeed,
 						targetclame.getPosition()),
 						new TypeChangeInfluence(State.WATCHING))
 						boolWander = false;
@@ -149,6 +159,22 @@ agent spectator extends AbstractAnimat {
 			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, occurrence.body.direction, occurrence.body.currentLinearSpeed, occurrence.body.maxLinear, occurrence.body.currentAngularSpeed, occurrence.body.maxAngular), new TypeChangeInfluence(occurrence.body.type))
 		}
 
-
 	}
-}
+		
+		else
+		{
+				emitInfluence(null, new NullInfluence())
+			if (!occurrence.body.type.equals(State.DEAD))
+				emitInfluence(null, new TypeChangeInfluence(State.DEAD))	
+		}
+	}
+	else
+	{
+			if (!occurrence.body.type.equals(State.DEAD))
+				emitInfluence(null, new TypeChangeInfluence(State.DEAD))	
+			emitInfluence(null, new NullInfluence())
+		
+	}
+	}
+	}
+	
