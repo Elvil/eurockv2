@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import fr.utbm.info.vi51.framework.environment.ShapedObject;
 import fr.utbm.info.vi51.general.tree.QuadTree;
+import fr.utbm.info.vi51.general.tree.QuadTreeNode;
 
 public class IteratorData<D extends ShapedObject> implements Iterator<D>
 {
@@ -16,6 +17,11 @@ public class IteratorData<D extends ShapedObject> implements Iterator<D>
 		searchNext();
 	}
 	
+	public IteratorData(QuadTreeNode<D> root) {
+		it =  new IteratorAllNode<D>(root);
+		searchNext();
+	}
+
 	public void searchNext(){
 		if(stack.isEmpty()){
 			while(it.hasNext() && stack.isEmpty()){

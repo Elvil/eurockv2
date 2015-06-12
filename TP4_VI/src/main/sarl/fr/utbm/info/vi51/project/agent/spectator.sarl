@@ -79,56 +79,76 @@ agent spectator extends AbstractAnimat {
 	on PerceptionEvent {
 		var target = occurrence.perceptions.first
 		var boolWander = true;
+		var stateFind = alertBehaviour.runAlert(occurrence.body, occurrence.perceptions);
 
 		if(target !== null) {
-		//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
-			if(alertBehaviour.runAlert(occurrence.body, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED)) {
+		//EN stateFind il trouve ALERTED_OUT ou ALERTED
+			if(stateFind != null) {
 
 				var targetPos = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
-				if(targetPos.getX == 0 || targetPos.getY == 0) {
-					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					new Point2f(400, 0)),
-					new TypeChangeInfluence(State.ALERTED))
-				} else {
-					emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinear,
-					targetPos),
-					new TypeChangeInfluence(State.ALERTED))
+
+				if(occurrence.body.type == State.ALERTED_OUT || stateFind == State.ALERTED_OUT) {
+					if(targetPos == null) {
+						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+						occurrence.body.currentLinearSpeed,
+						occurrence.body.maxLinear,
+						new Point2f(400, 0)),
+						new TypeChangeInfluence(stateFind))
+					} else {
+						emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
+						occurrence.body.currentLinearSpeed,
+						occurrence.body.maxLinear,
+						targetPos.getPosition()),
+						new TypeChangeInfluence(stateFind))
+						//print("je veux esquiver ça : " + targetPos.getName() + "\n")
+					}
+
 				}
+				else {
+					emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, 
+						occurrence.body.direction, 
+						occurrence.body.currentLinearSpeed, 
+						occurrence.body.maxLinear, 
+						occurrence.body.currentAngularSpeed, 
+						occurrence.body.maxAngular
+					), new TypeChangeInfluence(State.ALERTED))
+				}
+
 				boolWander = false;
 			}
 			else {
-				var targetPos = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
-				if(targetPos.getX != 0 || targetPos.getY != 0) {
+				var targetclame = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
+				if(targetclame != null) {
 					if(occurrence.body.type == State.HUNGRY || occurrence.body.type == State.EATING)
 					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
 						occurrence.body.maxLinear,
-						targetPos),
+						targetclame.getPosition()),
 						new TypeChangeInfluence(State.EATING))
 						boolWander = false;
 					}
 
-					if(occurrence.body.type == State.SEARCH_WATCHING || occurrence.body.type == State.WATCHING )
+					if(occurrence.body.type == State.SEARCH_WATCHING || occurrence.body.type == State.WATCHING)
 					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
 						occurrence.body.maxLinear,
-						targetPos),
+						targetclame.getPosition()),
 						new TypeChangeInfluence(State.SEARCH_WATCHING))
 						boolWander = false;
 						//print("recherche de la scene \n");
+
 					}
 				}
 			}
 
 		}
+
 		if(boolWander) {
 			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, occurrence.body.direction, occurrence.body.currentLinearSpeed, occurrence.body.maxLinear, occurrence.body.currentAngularSpeed, occurrence.body.maxAngular), new TypeChangeInfluence(occurrence.body.type))
 		}
+
+
 	}
 }

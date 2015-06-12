@@ -48,7 +48,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	private int MaxMiam = 7000;
 	private int TimeToMiam = new Random().nextInt(7000);
 	private String WantToWatch =randomWantToWatch(Semantics.EXIT);
-	private int TimeToWatch = 4000 ; //new Random().nextInt(200);
+	private int TimeToWatch = 10000 ; //new Random().nextInt(200);
 	private int TimePasserCommande = 0;
 
 	private transient MotionInfluence motionInfluence = null;
@@ -132,7 +132,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			TimeToMiam--;
 		}
 
-		if (!getType().equals(State.ALERTED) && !getType().equals(State.EATING)) {
+		if (!getType().equals(State.ALERTED_OUT) && !getType().equals(State.ALERTED) && !getType().equals(State.EATING)) {
 
 			if (TimeToMiam < (MaxMiam / 3)) {
 				setType(State.HUNGRY);
@@ -162,13 +162,17 @@ public class AgentBody extends AbstractMobileObject implements Body {
 		if (getType().equals(State.SEARCH_WATCHING)) {
 			//Nothing, il cherche une scene
 		}
+		
+		if (getType().equals(State.ALERTED_OUT)) {
+			//System.out.println("Je suis en alerte wesh");
+		}
 
 		if (getType().equals(State.SEARCH_WATCHING)) {
 			if (searchTarget(WantToWatch)) {
 				if (TimeToWatch >=0) {
 					TimeToWatch -= 10;
 				} else {
-					TimeToWatch = randomGenerator.nextInt(4000);
+					TimeToWatch = randomGenerator.nextInt(10000);
 					setWantToWatch(randomWantToWatch(getWantToWatch()));
 					setType(State.CALM);
 				}
@@ -203,7 +207,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			if(nbRand >= 7 && !Semantics.SCENE_PLAGE.equals(old)){
 				newWant = Semantics.SCENE_PLAGE;
 			}
-			System.out.println(newWant);
+			//System.out.println(newWant);
 		}
 		
 		return newWant;

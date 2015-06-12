@@ -73,7 +73,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 
 	private final static float RABBIT_SIZE = 10f;
 	
-	private final static float PERCEPTION_RADIUS = 190f;
+	private final static float PERCEPTION_RADIUS = 90f;
 	
 	private final static UUID TARGET_ID = UUID.randomUUID();
 
@@ -236,8 +236,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		IteratorData itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
 		
 		while(itImmobile.hasNext()){
-			actionTree.addData(new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(0,0), 0));
+			SituatedArtifact addr = new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(0,0), 0);
+			actionTree.addData(addr);
+			//System.out.println(addr.getShape());
 		}
+		
+		//this.displayTree(actionTree);
 		
 		//
 		// Put the influences in a spatial tree
@@ -276,8 +280,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				SituatedArtifact inf1 = influences.get(i);
 				if (!inf1.isEmpty()) {
 					Shape2f<?> s1 = inf1.getShape();	
-					for (SituatedObject obj : getAllObjects()) {
-						if ((!(obj instanceof AgentBody)) && (s1.intersects(obj.getShape()))) {
+					for (SituatedObject obj : this.dataStructureImmobile.getData()) {
+						if ( (s1.intersects(obj.getShape()) && (inf1.getObject() != null) )) {
 							inf1.clear();
 							break;
 						}
@@ -286,7 +290,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 						for (int j = i + 1; j < influences.size(); ++j) {
 							SituatedArtifact inf2 = influences.get(j);
 							if (!inf2.isEmpty()) {
-								if (s1.intersects(inf2.getShape())) {
+								if (s1.intersects(inf2.getShape()) && (inf1.getObject() != null)) {
 									if(inf2.getObject() instanceof AgentBody){
 									inf2.clear();
 									}
@@ -439,6 +443,14 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		
 		return new Point2f(x, y);
 	}
+	
+	public void displayTree(QuadTree<SituatedArtifact> tree){
+		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(tree.getRoot());
+		
+		while(iterator.hasNext()){
+			System.out.println(iterator.next().getBounds());
+		}
+	}
 
 	/**
 	 * Real action to apply in the world.
@@ -565,7 +577,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		public void clear() {
 			//this.linearMotion.normalize();
 			//this.linearMotion.negate();
-			//this.linearMotion.setLength(this.linearMotion.length()/2);
+			//this.linearMotion.setLength(this.linearMotion.length()/5);
 			//this.linearMotion.setOrientationAngle(this.linearMotion.getOrientationAngle()+5);
 			//this.cleared = true;
 			this.linearMotion.set(new Vector2f());

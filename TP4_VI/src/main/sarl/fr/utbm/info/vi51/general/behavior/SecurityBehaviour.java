@@ -50,7 +50,7 @@ public class SecurityBehaviour {
 		} else {
 			for (Percept p : perceptions) {
 				if (p.getName().equals(Semantics.SPECTATOR)
-						&& !p.getType().equals(State.ALERTED)) {
+						&& !p.getType().equals(State.ALERTED_OUT)) {
 					return p.getPosition();
 				}
 			}

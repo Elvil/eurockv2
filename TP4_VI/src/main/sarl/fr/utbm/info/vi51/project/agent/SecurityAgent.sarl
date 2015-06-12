@@ -83,14 +83,14 @@ agent SecurityAgent extends AbstractAnimat {
 
 		if(target !== null) {
 		//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
-			if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED) || securityAlert.getBombFind ) {
+			if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED_OUT) || securityAlert.getBombFind ) {
 				posBomb = this.securityAlert.followAgent(occurrence.body.position, occurrence.perceptions)
 				if(posBomb.getX() != 0) {
 					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 					occurrence.body.currentLinearSpeed,
 					occurrence.body.maxLinear,
 					posBomb),
-					new TypeChangeInfluence(State.ALERTED))
+					new TypeChangeInfluence(State.ALERTED_OUT))
 				} else
 				{
 					emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
@@ -99,7 +99,7 @@ agent SecurityAgent extends AbstractAnimat {
 					occurrence.body.maxLinear,
 					occurrence.body.currentAngularSpeed,
 					occurrence.body.maxAngular),
-					new TypeChangeInfluence(State.ALERTED))
+					new TypeChangeInfluence(State.ALERTED_OUT))
 				}
 				boolWander = false;
 				//print("bombe detected");

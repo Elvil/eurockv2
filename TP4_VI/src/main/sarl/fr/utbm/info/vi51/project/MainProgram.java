@@ -51,9 +51,9 @@ public class MainProgram {
 		List<ImmobileObject> listIm = new ArrayList<ImmobileObject>();
 		
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(50,50), Semantics.SCENE_GRAND));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(5, 5), new Point2f(100, 100)), new Point2f(150,250), Semantics.SCENE_LOGGIA));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,550), Semantics.SCENE_PLAGE));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,400), Semantics.STAND_MIAM));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(5, 5), new Point2f(100, 100)), new Point2f(50,550), Semantics.SCENE_LOGGIA));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,50), Semantics.SCENE_PLAGE));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,550), Semantics.STAND_MIAM));
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,400), Semantics.SCENE));
 		environment.setImmobileObject(listIm);
 		
@@ -72,7 +72,7 @@ public class MainProgram {
 
 		w.setEnvironment(environment);
 		w.run();
-		w.setTarget(new Point2f(10,10));
+		
 		
 		
 		//FrameworkGUI gui = new GUI(WORLD_SIZE_X, WORLD_SIZE_Y,environment.getTimeManager());
@@ -82,6 +82,8 @@ public class MainProgram {
 				new ApplicationMapping(),
 				DynamicType.STEERING,
 				w);
+		
+	//	environment.displayTree();
 				
 	}
 
@@ -94,7 +96,7 @@ public class MainProgram {
 		@Override
 		public Class<? extends Agent> getAgentTypeForBody(AgentBody body) {
 
-			System.out.println("création de l'agent := " + body.getName());
+			//System.out.println("création de l'agent := " + body.getName());
 			if(body.getName() == "ARTIST") {
 				return Artist.class;
 			} else if (body.getName() == "SPECTATOR") {
