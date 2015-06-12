@@ -53,7 +53,7 @@ agent spectator extends AbstractAnimat {
 	var alertBehaviour : AlertBehaviour
 	var liveBehaviour : LiveBehaviour
 	var isAlive = true;
-	var positionExit = null;
+	var positionExit : Point2f;
 	val STOP_RADIUS = MathUtil.PI / 8f
 	val SLOW_RADIUS = MathUtil.PI / 2f
 	val WANDER_CIRCLE_DISTANCE = 20f
@@ -75,6 +75,7 @@ agent spectator extends AbstractAnimat {
 		else {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
 		}
+		positionExit = null;
 		this.liveBehaviour = new LiveBehaviour();
 		emit(new SimulationAgentReady)
 	}
@@ -86,45 +87,33 @@ agent spectator extends AbstractAnimat {
 		if (isAlive)
 		{
 			
-		var target = occurrence.perceptions.first
 		var boolWander = true;
 		var stateFind = alertBehaviour.runAlert(occurrence.body, occurrence.perceptions);
-		if (this.positionExit == null || this.positionExit == (new Point2f(-1,-1)))
-			this.positionExit = alertBehaviour.getExit(occurrence.body, occurrence.perceptions)
-		if(target !== null) {
+		
 		//EN stateFind il trouve ALERTED_OUT ou ALERTED
 			if(stateFind != null) {
-
-				var targetPos = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
-
-				if(occurrence.body.type == State.ALERTED_OUT || stateFind == State.ALERTED_OUT) {
-					if(targetPos == null) {
+			
+				
+				var targetPos = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions);
+					if(targetPos == null) { // Il ne sait pas où aller alors il va n'importe 
+							emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, 
+								occurrence.body.direction, 
+								occurrence.body.currentLinearSpeed, 
+								occurrence.body.maxLinearSpeed, 
+								occurrence.body.currentAngularSpeed, 
+								occurrence.body.maxAngularSpeed
+							), new TypeChangeInfluence(stateFind))
+					}
+					else
+					{
 						emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
 						occurrence.body.currentLinearSpeed,
 						occurrence.body.maxLinearSpeed,
-						new Point2f(400, 0)),
-						new TypeChangeInfluence(stateFind))
-					} else {
-						emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
-						occurrence.body.currentLinearSpeed,
-						occurrence.body.maxLinearSpeed,
 						targetPos.getPosition()),
-						new TypeChangeInfluence(stateFind))
-						//print("je veux esquiver ça : " + targetPos.getName() + "\n")
+						new TypeChangeInfluence(stateFind));
 					}
-
-				}
-				else {
-					emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, 
-						occurrence.body.direction, 
-						occurrence.body.currentLinearSpeed, 
-						occurrence.body.maxLinearSpeed, 
-						occurrence.body.currentAngularSpeed, 
-						occurrence.body.maxAngularSpeed
-					), new TypeChangeInfluence(State.ALERTED))
-				}
-
 				boolWander = false;
+			
 			}
 			else {
 				var targetclame = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
@@ -153,13 +142,11 @@ agent spectator extends AbstractAnimat {
 				}
 			}
 
-		}
 
 		if(boolWander) {
 			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, occurrence.body.direction, occurrence.body.currentLinearSpeed, occurrence.body.maxLinear, occurrence.body.currentAngularSpeed, occurrence.body.maxAngular), new TypeChangeInfluence(occurrence.body.type))
 		}
-
-	}
+}
 		
 		else
 		{

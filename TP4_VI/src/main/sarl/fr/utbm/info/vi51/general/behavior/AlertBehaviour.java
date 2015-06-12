@@ -70,7 +70,7 @@ public class AlertBehaviour {
 
 				for (Percept p : perceptions) {
 					if (position.distance(p.getPosition()) < RADIUS_ALERT) {
-						if (p.getType().equals(Semantics.EXIT)) {
+						if (p.getName().equals(Semantics.EXIT)) {
 							System.out.println("J'ai vu la sortie");
 							return p.getPosition();
 						}
@@ -92,12 +92,26 @@ public class AlertBehaviour {
 			break;
 
 		case ALERTED:
-			target = Semantics.BOMB;
+			//target = Semantics.BOMB;
+			for (Percept p : perceptions) {
+				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT) {
+					if (p.getName().equals(Semantics.EXIT)) {
+						System.out.println("J'ai vu la sortie");
+						return p;
+					}
+				}
+			}
 			break;
 		case ALERTED_OUT:
 				for (Percept p : perceptions) {
-					if (!p.getName().equals(Semantics.SPECTATOR) && !p.getName().equals(Semantics.SECURITY_AGENT) ) {
+					/*if (!p.getName().equals(Semantics.SPECTATOR) && !p.getName().equals(Semantics.SECURITY_AGENT) ) {
 						return p;
+					}*/
+					if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT) {
+						if (p.getName().equals(Semantics.EXIT)) {
+							System.out.println("J'ai vu la sortie");
+							return p;
+						}
 					}
 				}
 			break;
@@ -108,13 +122,13 @@ public class AlertBehaviour {
 			break;
 		}
 
-		if (target != null) {
+		/*if (target != null) {
 			for (Percept p : perceptions) {
 				if (p.getName().equals(target)) {
 					return p;
 				}
 			}
-		}
+		}*/
 		return null;
 	}
 }
