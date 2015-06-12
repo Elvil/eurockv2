@@ -69,19 +69,18 @@ public class AlertBehaviour {
 			if (!perceptions.isEmpty()) {
 
 				for (Percept p : perceptions) {
-					if (position.distance(p.getPosition()) < RADIUS_ALERT) {
+					if (position.distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
 						if (p.getName().equals(Semantics.EXIT)) {
-							System.out.println("J'ai vu la sortie");
 							return p.getPosition();
 						}
 					}
 				}
 			}
 		}
-		return new Point2f(-1,-1);
+		return (new Point2f(-1,-01));
 	}
 
-	public Percept searchTarget(Percept body, List<Percept> perceptions) {
+	public Point2f searchTarget(Percept body, List<Percept> perceptions) {
 
 		State state = (State) body.getType();
 		String target = null;
@@ -94,26 +93,26 @@ public class AlertBehaviour {
 		case ALERTED:
 			//target = Semantics.BOMB;
 			for (Percept p : perceptions) {
-				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT) {
+				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
 					if (p.getName().equals(Semantics.EXIT)) {
-						System.out.println("J'ai vu la sortie");
-						return p;
+						if (p != null)
+							return p.getPosition();
+						return null;
 					}
 				}
 			}
 			break;
 		case ALERTED_OUT:
-				for (Percept p : perceptions) {
-					/*if (!p.getName().equals(Semantics.SPECTATOR) && !p.getName().equals(Semantics.SECURITY_AGENT) ) {
-						return p;
-					}*/
-					if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT) {
-						if (p.getName().equals(Semantics.EXIT)) {
-							System.out.println("J'ai vu la sortie");
-							return p;
-						}
+			for (Percept p : perceptions) {
+				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
+					if (p.getName().equals(Semantics.SPECTATOR))
+						if (!p.getType().equals(State.DEAD) && !p.getType().equals(State.ALERTED) && !p.getType().equals(State.ALERTED_OUT))
+								return p.getPosition();
+					if (p.getName().equals(Semantics.EXIT)) {
+							return p.getPosition();
 					}
 				}
+			}
 			break;
 
 		case SEARCH_WATCHING:
@@ -129,6 +128,6 @@ public class AlertBehaviour {
 				}
 			}
 		}*/
-		return null;
+		return new Point2f(-1,-1);
 	}
 }

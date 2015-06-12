@@ -10,7 +10,7 @@ import fr.utbm.info.vi51.framework.math.Shape2f;
 
 public class BombObject extends ImmobileObject {
 
-	public static float RAYON = 50.0f;
+	public static float RAYON = 100.0f;
 	public BombObject(UUID id, Shape2f<?> shape, Point2f position, String name) {
 		super(id, shape, position, name);
 		// TODO Auto-generated constructor stub

@@ -29,12 +29,12 @@ public class GraphicBomb extends AbstractGraphicObject {
 			g2d.fill(this.shp);
 			
 			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.green, bomb.lifetime));
-			g2d.fillRect((int)(this.shp.getBounds().getMinX() - (4* this.shp.getBounds().getWidth())/2), (int) (this.shp.getBounds().getMinY()+this.shp.getBounds().getHeight()), 4 * (int) (this.shp.getBounds().getWidth() * bomb.lifetime), 5);
+			g2d.fillRect((int)(this.shp.getBounds().getMinX() - (4* this.shp.getBounds().getWidth())/2), (int) (this.shp.getBounds().getMinY()+this.shp.getBounds().getHeight()), 6 * (int) (this.shp.getBounds().getWidth() * bomb.lifetime), 5);
 		}
 		if (bomb.type.equals(Semantics.EXPLOSION))
 		{
 			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.yellow, bomb.lifetime));
-			g2d.fillOval((int)(this.shp.getBounds().getMinX() - 50*bomb.lifetime), (int)(this.shp.getBounds().getMinY() - 50*bomb.lifetime), (int)(100*bomb.lifetime), (int)(100*bomb.lifetime));
+			g2d.fillOval((int)(this.shp.getBounds().getMinX() - BombObject.RAYON*bomb.lifetime), (int)(this.shp.getBounds().getMinY() - BombObject.RAYON*bomb.lifetime), (int)(2*BombObject.RAYON*bomb.lifetime), (int)(2*BombObject.RAYON*bomb.lifetime));
 		}
 		if (bomb.type.equals(Semantics.BOMBEXPLOSEE))
 		{
@@ -42,13 +42,13 @@ public class GraphicBomb extends AbstractGraphicObject {
 			Color w = new Color(0,0,0,0);
 	        Color gr = new Color (200, 200, 200, 200);
 			Paint p = new RadialGradientPaint(new Point2D.Double(
-	        		this.shp.getBounds().getMinX() - 50*bomb.lifetime,
-	        		this.shp.getBounds().getMinY() - 50*bomb.lifetime), 50,
+	        		this.shp.getBounds().getMinX(),
+	        		this.shp.getBounds().getMinY()), BombObject.RAYON * 0.75f,
 	                new float[] { 0.0f, 1.0f },
 	                new Color[] {gr , w});
 	        g2d.setPaint(p);
 //			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.yellow, bomb.lifetime));
-			g2d.fillOval((int)(this.shp.getBounds().getMinX() - 50), (int)(this.shp.getBounds().getMinY() - 50), 100, 100);
+			g2d.fillOval((int)(this.shp.getBounds().getMinX() - BombObject.RAYON), (int)(this.shp.getBounds().getMinY() - BombObject.RAYON), (int)(2*BombObject.RAYON), (int)(2*BombObject.RAYON));
 		}
 		
 		

@@ -80,89 +80,87 @@ agent SecurityAgent extends AbstractAnimat {
 	}
 
 	on PerceptionEvent {
-if (isAlive)
+		if(isAlive)
 		{
 			isAlive = this.liveBehaviour.isAlive(occurrence.body.position, occurrence.perceptions);
-		if (isAlive)
-		{
-		var target = occurrence.perceptions.first
-		var boolWander = true;
-		var posBomb : Point2f;
-		var positionCopain : Point2f;
-		if(target !== null) {
-		//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
-			if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED_OUT) || securityAlert.getBombFind ) {
-				posBomb = this.securityAlert.followAgent(occurrence.body.position, occurrence.perceptions)
-				positionCopain = this.securityAlert.fleeAgent(occurrence.body.position, occurrence.perceptions);
-				if(posBomb.getX() != 0) {
-					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinearSpeed,
-					posBomb),
-					new TypeChangeInfluence(State.ALERTED_OUT))
-				} else
-				{
+			if(isAlive)
+			{
+				var target = occurrence.perceptions.first
+				var boolWander = true;
+				var posBomb : Point2f;
+				var positionCopain : Point2f;
+				if(target !== null) {
+				//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
+					if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED_OUT) || securityAlert.getBombFind) {
+						posBomb = this.securityAlert.followAgent(occurrence.body.position, occurrence.perceptions)
+						positionCopain = this.securityAlert.fleeAgent(occurrence.body.position, occurrence.perceptions);
+						if(posBomb.getX() != 0) {
+							emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							posBomb),
+							new TypeChangeInfluence(State.ALERTED_OUT))
+						} else
+						{
+							emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
+							occurrence.body.direction,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							occurrence.body.currentAngularSpeed,
+							occurrence.body.maxAngularSpeed),
+							new TypeChangeInfluence(State.ALERTED_OUT))
+						}
+						boolWander = false;
+					}
+					else {
+
+						if(occurrence.body.type == State.HUNGRY && target.name.equals(Semantics.STAND_MIAM))
+						{
+							emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							target.position),
+							new TypeChangeInfluence(occurrence.body.type))
+							boolWander = false;
+						}
+
+						if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE_PLAGE))
+						{
+							emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							target.position),
+							new TypeChangeInfluence(occurrence.body.type))
+							boolWander = false;
+						}
+
+					}
+
+				}
+
+				if(boolWander) {
 					emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
 					occurrence.body.direction,
 					occurrence.body.currentLinearSpeed,
 					occurrence.body.maxLinearSpeed,
 					occurrence.body.currentAngularSpeed,
 					occurrence.body.maxAngularSpeed),
-					new TypeChangeInfluence(State.ALERTED_OUT))
-				}
-				boolWander = false;
-			}
-			else {
-
-				if(occurrence.body.type == State.HUNGRY && target.name.equals(Semantics.STAND_MIAM))
-				{
-					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinearSpeed,
-					target.position),
 					new TypeChangeInfluence(occurrence.body.type))
-					boolWander = false;
-				}
 
-				if(occurrence.body.type == State.SEARCH_WATCHING && target.name.equals(Semantics.SCENE_PLAGE))
-				{
-					emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
-					occurrence.body.currentLinearSpeed,
-					occurrence.body.maxLinearSpeed,
-					target.position),
-					new TypeChangeInfluence(occurrence.body.type))
-					boolWander = false;
 				}
-
 			}
-
+			else
+			{
+				print("Mort \n")
+				emitInfluence(null, new NullInfluence())
+				if(!occurrence.body.type.equals(State.DEAD))
+				emitInfluence(null, new TypeChangeInfluence(State.DEAD))
+			}
 		}
-
-		if(boolWander) {
-			emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
-			occurrence.body.direction,
-			occurrence.body.currentLinearSpeed,
-			occurrence.body.maxLinearSpeed,
-			occurrence.body.currentAngularSpeed,
-			occurrence.body.maxAngularSpeed),
-			new TypeChangeInfluence(occurrence.body.type))
-
-		}
-	}
 		else
 		{
-			print("Mort \n")
-				emitInfluence(null, new NullInfluence())
-			if (!occurrence.body.type.equals(State.DEAD))
-				emitInfluence(null, new TypeChangeInfluence(State.DEAD))	
+			if(!occurrence.body.type.equals(State.DEAD))
+			emitInfluence(null, new TypeChangeInfluence(State.DEAD)) emitInfluence(null, new NullInfluence())
 		}
-	}
-	else
-	{
-			if (!occurrence.body.type.equals(State.DEAD))
-				emitInfluence(null, new TypeChangeInfluence(State.DEAD))	
-			emitInfluence(null, new NullInfluence())
-		
-	}
 	}
 }

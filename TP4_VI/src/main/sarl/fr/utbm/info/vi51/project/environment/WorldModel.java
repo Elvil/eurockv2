@@ -223,7 +223,7 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				if (id != null) {
 					AgentBody body = getAgentBodyFor(id);
 					if (body != null) {
-						if (i.getType().equals(State.DEAD))
+						if (i.getType().equals(State.DEAD) || i.getType().equals(State.GONE))
 						{
 							move(body, new Vector2f(0,0), 0);
 							this.dataStructure.removeData(body);
@@ -336,9 +336,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		for (SituatedArtifact action : actionTree.getData()) {
 			MobileObject obj = action.getObject();
 			if (!action.isEmpty() && obj != null) {
+
 				boolean b = this.dataStructure.removeData(obj);
 				assert (b) : "Object cannot be removed from quadtree: " + obj;
 				move(obj, action.getLinearMotion(), action.getAngularMotion());
+				/*if (obj.getType().equals(Semantics.DEAD))
+					move(obj, new Vector2f(0,0), 0);*/
 				b = this.dataStructure.addData(obj);
 				assert (b) : "Object cannot be added in quadtree: " + obj;
 			}
@@ -612,12 +615,12 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		/** Clear the movement definition.
 		 */
 		public void clear() {
-			//this.linearMotion.normalize();
-			//this.linearMotion.negate();
-			//this.linearMotion.setLength(this.linearMotion.length()/5);
-			//this.linearMotion.setOrientationAngle(this.linearMotion.getOrientationAngle()+5);
+			this.linearMotion.normalize();
+			this.linearMotion.negate();
+			this.linearMotion.setLength(this.linearMotion.length()/2);
+			/*this.linearMotion.setOrientationAngle(45);*/
 			//this.cleared = true;
-			this.linearMotion.set(new Vector2f());
+			//this.linearMotion.set(new Vector2f());
 
 		}
 

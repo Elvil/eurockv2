@@ -12,6 +12,7 @@ public enum State {
 	DEFUSING,
 	SEARCH_WATCHING,
 	EATING,
-	DEAD
+	DEAD,
+	GONE
 	
 }

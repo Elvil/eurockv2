@@ -124,7 +124,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 	}
 
 	public void liveBody() {
-		if (!this.getType().equals(State.DEAD)){
+		if (!this.getType().equals(State.DEAD) && !this.getType().equals(State.GONE)){
 			Random randomGenerator = new Random();
 
 			// All the time

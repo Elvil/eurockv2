@@ -11,6 +11,7 @@ import fr.utbm.info.vi51.framework.FrameworkLauncher;
 import fr.utbm.info.vi51.framework.environment.AgentBody;
 import fr.utbm.info.vi51.framework.environment.DynamicType;
 import fr.utbm.info.vi51.framework.environment.ImmobileObject;
+import fr.utbm.info.vi51.framework.math.Circle2f;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Rectangle2f;
 import fr.utbm.info.vi51.framework.util.LocalizedString;
@@ -24,8 +25,8 @@ import fr.utbm.info.vi51.project.environment.WorldModel;
 
 public class MainProgram {
 
-	private static float WORLD_SIZE_X = 700;
-	private static float WORLD_SIZE_Y = 700;
+	public static float WORLD_SIZE_X = 800;
+	public static float WORLD_SIZE_Y = 800;
 	private static int NUMBER_ARTIST = 0;
 	private static int NUMBER_SPECTATOR = 100;
 	private static int NUMBER_SECURITYAGENT = 10;
@@ -55,8 +56,10 @@ public class MainProgram {
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,50), Semantics.SCENE_PLAGE));
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,550), Semantics.STAND_MIAM));
 //		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(10, 100)), new Point2f(790,550), Semantics.EXIT));
-		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(10, 100)), new Point2f(400,550), Semantics.EXIT));
-			
+		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Circle2f(400,400,20), new Point2f(0,0), Semantics.EXIT));
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(0, 0), new Point2f(50, 50)), new Point2f(0,400), Semantics.EXIT));
+//			
+		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(0, 0), new Point2f(50, 50)), new Point2f(750,400), Semantics.EXIT));
 		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,400), Semantics.SCENE));
 		environment.setImmobileObject(listIm);
 		
