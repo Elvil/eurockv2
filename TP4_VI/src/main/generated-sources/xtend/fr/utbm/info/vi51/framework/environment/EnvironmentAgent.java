@@ -1,14 +1,5 @@
 package fr.utbm.info.vi51.framework.environment;
 
-import fr.utbm.info.vi51.framework.environment.AgentBody;
-import fr.utbm.info.vi51.framework.environment.Environment;
-import fr.utbm.info.vi51.framework.environment.Influence;
-import fr.utbm.info.vi51.framework.environment.InfluenceEvent;
-import fr.utbm.info.vi51.framework.environment.PerceptionEvent;
-import fr.utbm.info.vi51.framework.environment.RestartSimulation;
-import fr.utbm.info.vi51.framework.environment.SimulationAgentReady;
-import fr.utbm.info.vi51.framework.environment.StartSimulation;
-import fr.utbm.info.vi51.framework.environment.StopSimulation;
 import fr.utbm.info.vi51.framework.time.TimeManager;
 import fr.utbm.info.vi51.framework.time.TimePercept;
 import fr.utbm.info.vi51.framework.util.AddressUUIDScope;
@@ -38,9 +29,11 @@ import io.sarl.lang.core.Scope;
 import io.sarl.lang.core.Space;
 import io.sarl.lang.core.SpaceID;
 import io.sarl.util.OpenEventSpace;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
@@ -58,8 +51,6 @@ public class EnvironmentAgent extends Agent {
   protected OpenEventSpace space;
   
   protected Address myAdr;
-  
-  protected boolean launched = false;
   
   protected int influences = 0;
   
@@ -123,7 +114,7 @@ public class EnvironmentAgent extends Agent {
   public void _handle_StopSimulation_2(final StopSimulation occurrence) {
     /* this; */
     synchronized (this) {
-      this.launched = false;
+      this.killMe();
     }
   }
   
@@ -135,20 +126,11 @@ public class EnvironmentAgent extends Agent {
     }
   }
   
-  @Percept
-  public void _handle_RestartSimulation_4(final RestartSimulation occurrence) {
-    /* this; */
-    synchronized (this) {
-      this.launched = true;
-    }
-  }
-  
   public void runEnvironmentBehavior() {
     try {
       this.freeze.set(true);
       this.influences = 0;
       this.environment.runBehaviour();
-      this.launched = true;
       TimeManager _timeManager = this.environment.getTimeManager();
       float _simulationDelay = _timeManager.getSimulationDelay();
       long delay = ((long) _simulationDelay);
@@ -171,28 +153,27 @@ public class EnvironmentAgent extends Agent {
   }
   
   public void notifyAgentsOrDie() {
-    if (this.launched) {
-      boolean run = false;
-      TimeManager _timeManager = this.environment.getTimeManager();
-      float _currentTime = _timeManager.getCurrentTime();
-      TimeManager _timeManager_1 = this.environment.getTimeManager();
-      float _lastStepDuration = _timeManager_1.getLastStepDuration();
-      final TimePercept timePercept = new TimePercept(_currentTime, _lastStepDuration);
-      Iterable<? extends AgentBody> _agentBodies = this.environment.getAgentBodies();
-      for (final AgentBody body : _agentBodies) {
-        {
-          run = true;
-          List<fr.utbm.info.vi51.framework.environment.Percept> _perceivedObjects = body.getPerceivedObjects();
-          fr.utbm.info.vi51.framework.environment.Percept _percept = new fr.utbm.info.vi51.framework.environment.Percept(body);
-          PerceptionEvent event = new PerceptionEvent(_perceivedObjects, _percept, timePercept);
-          event.setSource(this.myAdr);
-          UUID _iD = body.getID();
-          AddressUUIDScope _addressUUIDScope = new AddressUUIDScope(_iD);
-          this.space.emit(event, _addressUUIDScope);
-        }
+    boolean run = false;
+    TimeManager _timeManager = this.environment.getTimeManager();
+    float _currentTime = _timeManager.getCurrentTime();
+    TimeManager _timeManager_1 = this.environment.getTimeManager();
+    float _lastStepDuration = _timeManager_1.getLastStepDuration();
+    final TimePercept timePercept = new TimePercept(_currentTime, _lastStepDuration);
+    Iterable<? extends AgentBody> _agentBodies = this.environment.getAgentBodies();
+    for (final AgentBody body : _agentBodies) {
+      {
+        run = true;
+        List<fr.utbm.info.vi51.framework.environment.Percept> _perceivedObjects = body.getPerceivedObjects();
+        fr.utbm.info.vi51.framework.environment.Percept _percept = new fr.utbm.info.vi51.framework.environment.Percept(body);
+        PerceptionEvent event = new PerceptionEvent(_perceivedObjects, _percept, timePercept);
+        event.setSource(this.myAdr);
+        UUID _iD = body.getID();
+        AddressUUIDScope _addressUUIDScope = new AddressUUIDScope(_iD);
+        this.space.emit(event, _addressUUIDScope);
       }
-      if ((!run)) {
-      }
+    }
+    if ((!run)) {
+      this.killMe();
     }
   }
   

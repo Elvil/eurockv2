@@ -9,7 +9,6 @@ import fr.utbm.info.vi51.framework.math.Circle2f;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Shape2f;
 import fr.utbm.info.vi51.project.GUI.Graphics.AbstractGraphicElement;
-import fr.utbm.info.vi51.project.environment.State;
 
 public abstract class AbstractGraphicAgent extends AbstractGraphicElement {
 

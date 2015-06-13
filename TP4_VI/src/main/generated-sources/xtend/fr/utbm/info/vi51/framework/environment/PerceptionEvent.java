@@ -1,9 +1,9 @@
 package fr.utbm.info.vi51.framework.environment;
 
-import fr.utbm.info.vi51.framework.environment.Percept;
 import fr.utbm.info.vi51.framework.time.TimePercept;
 import io.sarl.lang.annotation.Generated;
 import io.sarl.lang.core.Event;
+
 import java.util.List;
 
 /**

@@ -2,7 +2,6 @@ package fr.utbm.info.vi51.project.GUI.Graphics.Buttons;
 
 import java.awt.event.ActionEvent;
 
-import fr.utbm.info.vi51.project.GUI.Graphics.Layout.AbstractLayout;
 import fr.utbm.info.vi51.project.environment.BombObject;
 
 public class BombButton extends ButtonComponent {

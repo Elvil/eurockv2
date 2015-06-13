@@ -32,7 +32,6 @@ import fr.utbm.info.vi51.framework.math.Vector2f;
 import fr.utbm.info.vi51.framework.util.LocalizedString;
 import fr.utbm.info.vi51.project.environment.Semantics;
 import fr.utbm.info.vi51.project.environment.State;
-import fr.utbm.info.vi51.project.semantics.Semanticss;
 
 /**
  * Object on the environment.

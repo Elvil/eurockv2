@@ -11,7 +11,6 @@ import fr.utbm.info.vi51.framework.FrameworkLauncher;
 import fr.utbm.info.vi51.framework.environment.AgentBody;
 import fr.utbm.info.vi51.framework.environment.DynamicType;
 import fr.utbm.info.vi51.framework.environment.ImmobileObject;
-import fr.utbm.info.vi51.framework.math.Circle2f;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Rectangle2f;
 import fr.utbm.info.vi51.framework.util.LocalizedString;

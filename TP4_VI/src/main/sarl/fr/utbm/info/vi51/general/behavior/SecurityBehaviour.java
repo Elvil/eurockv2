@@ -1,7 +1,6 @@
 package fr.utbm.info.vi51.general.behavior;
 
 import java.util.List;
-import java.util.Random;
 
 import fr.utbm.info.vi51.framework.environment.Percept;
 import fr.utbm.info.vi51.framework.math.Point2f;

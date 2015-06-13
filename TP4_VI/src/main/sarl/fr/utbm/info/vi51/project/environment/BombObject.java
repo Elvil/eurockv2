@@ -2,7 +2,6 @@ package fr.utbm.info.vi51.project.environment;
 
 import java.util.UUID;
 
-import fr.utbm.info.vi51.framework.environment.AbstractMobileObject;
 import fr.utbm.info.vi51.framework.environment.ImmobileObject;
 import fr.utbm.info.vi51.framework.math.Point2f;
 import fr.utbm.info.vi51.framework.math.Shape2f;

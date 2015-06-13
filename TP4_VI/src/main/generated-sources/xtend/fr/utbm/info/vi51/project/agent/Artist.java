@@ -1,6 +1,25 @@
 package fr.utbm.info.vi51.project.agent;
 
+import io.sarl.core.AgentSpawned;
+import io.sarl.core.DefaultContextInteractions;
+import io.sarl.core.Initialize;
+import io.sarl.lang.annotation.FiredEvent;
+import io.sarl.lang.annotation.Generated;
+import io.sarl.lang.annotation.ImportedCapacityFeature;
+import io.sarl.lang.core.Address;
+import io.sarl.lang.core.Agent;
+import io.sarl.lang.core.AgentContext;
+import io.sarl.lang.core.Event;
+import io.sarl.lang.core.EventSpace;
+import io.sarl.lang.core.Percept;
+import io.sarl.lang.core.Scope;
+import io.sarl.lang.core.Space;
+import io.sarl.lang.core.SpaceID;
+
+import java.util.UUID;
+
 import com.google.common.base.Objects;
+
 import fr.utbm.info.vi51.framework.agent.AbstractAnimat;
 import fr.utbm.info.vi51.framework.agent.BehaviourOutput;
 import fr.utbm.info.vi51.framework.environment.DynamicType;
@@ -19,22 +38,6 @@ import fr.utbm.info.vi51.general.behavior.steering.SteeringFleeBehaviour;
 import fr.utbm.info.vi51.general.behavior.steering.SteeringSeekBehaviour;
 import fr.utbm.info.vi51.general.behavior.steering.SteeringWanderBehaviour;
 import fr.utbm.info.vi51.general.influence.TypeChangeInfluence;
-import io.sarl.core.AgentSpawned;
-import io.sarl.core.DefaultContextInteractions;
-import io.sarl.core.Initialize;
-import io.sarl.lang.annotation.FiredEvent;
-import io.sarl.lang.annotation.Generated;
-import io.sarl.lang.annotation.ImportedCapacityFeature;
-import io.sarl.lang.core.Address;
-import io.sarl.lang.core.Agent;
-import io.sarl.lang.core.AgentContext;
-import io.sarl.lang.core.Event;
-import io.sarl.lang.core.EventSpace;
-import io.sarl.lang.core.Percept;
-import io.sarl.lang.core.Scope;
-import io.sarl.lang.core.Space;
-import io.sarl.lang.core.SpaceID;
-import java.util.UUID;
 
 @SuppressWarnings("all")
 public class Artist extends AbstractAnimat {

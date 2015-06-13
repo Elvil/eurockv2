@@ -1,8 +1,7 @@
 package fr.utbm.info.vi51.project.GUI.Graphics.GraphicAgent;
 
-import fr.utbm.info.vi51.project.environment.Semantics;
-
 import fr.utbm.info.vi51.framework.environment.AgentBody;
+import fr.utbm.info.vi51.project.environment.Semantics;
 
 public class GraphicAgentFactory {
 

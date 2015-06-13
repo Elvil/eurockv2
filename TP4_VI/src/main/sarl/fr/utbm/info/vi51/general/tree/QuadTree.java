@@ -1,9 +1,7 @@
 package fr.utbm.info.vi51.general.tree;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Stack;
 
 import fr.utbm.info.vi51.framework.environment.ShapedObject;
 import fr.utbm.info.vi51.framework.environment.SpatialDataStructure;
