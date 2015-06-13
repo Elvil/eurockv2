@@ -65,9 +65,8 @@ public class AlertBehaviour {
 	{
 		Point2f position = body.getPosition();
 
-		if (!body.getType().equals(State.ALERTED_OUT)) {
+		if (!body.getType().equals(State.ALERTED_OUT) || !(body.getType().equals(State.ALERTED))) {
 			if (!perceptions.isEmpty()) {
-
 				for (Percept p : perceptions) {
 					if (position.distance(p.getShape().getBounds().getCenter()) < 100*RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
 						if (p.getName().equals(Semantics.EXIT)) {

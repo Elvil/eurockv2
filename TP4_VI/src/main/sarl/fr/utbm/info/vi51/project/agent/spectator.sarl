@@ -76,7 +76,7 @@ agent spectator extends AbstractAnimat {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
 		}
 		
-			this.alertBehaviour = new AlertBehaviour(30f);
+			this.alertBehaviour = new AlertBehaviour(50f);
 		isGone = false;
 		positionExit = (new Point2f(-1, -1));
 		this.liveBehaviour = new LiveBehaviour();

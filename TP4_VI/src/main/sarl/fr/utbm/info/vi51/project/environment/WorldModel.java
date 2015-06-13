@@ -161,9 +161,6 @@ public class WorldModel extends AbstractEnvironment implements
 
 		Shape2f<?> frustumShape = frustumAgent.toShape(agent.getPosition(),
 				agent.getDirection());
-		// if (mouseTarget != null)
-		// shapedPercept.add(new Percept(mouseTarget));
-
 		Iterator it = dataStructure.dataIterator(frustumShape);
 
 		while (it.hasNext()) {
@@ -197,8 +194,6 @@ public class WorldModel extends AbstractEnvironment implements
 				getWidth(), getHeight()));
 		QuadTree<SituatedArtifact> actionTree = new QuadTree(root);
 
-		// actionTree.setRoot(root);
-		//
 		// Consider other influences
 		for (Influence influence : otherInfluences) {
 			if (influence instanceof RemoveInfluence) {
@@ -273,8 +268,6 @@ public class WorldModel extends AbstractEnvironment implements
 			}
 		}
 
-		// this.displayTree(actionTree);
-
 		//
 		// Put the influences in a spatial tree
 		for (MotionInfluence mi : motionInfluences) {
@@ -326,14 +319,6 @@ public class WorldModel extends AbstractEnvironment implements
 							}
 						}
 					}
-					/*
-					 * if (!inf1.isEmpty() && i < influences.size() - 1) { for
-					 * (int j = i + 1; j < influences.size(); ++j) {
-					 * SituatedArtifact inf2 = influences.get(j); if
-					 * (!inf2.isEmpty()) { if (s1.intersects(inf2.getShape()) &&
-					 * (inf1.getObject() != null)) { if(inf2.getObject()
-					 * instanceof AgentBody){ //inf2.clear(); } //break; } } } }
-					 */
 				}
 			}
 		}
@@ -628,9 +613,11 @@ public class WorldModel extends AbstractEnvironment implements
 			this.linearMotion.normalize();
 			this.linearMotion.negate();
 			this.linearMotion.setLength(this.linearMotion.length());
-			/* this.linearMotion.setOrientationAngle(45); */
+			/*if (Double.isNaN(this.linearMotion.getOrientationAngle()))
+				this.linearMotion.setOrientationAngle(0);
+			this.linearMotion.setOrientationAngle(180 + this.linearMotion.getOrientationAngle());*/
 			// this.cleared = true;
-			// this.linearMotion.set(new Vector2f());
+			//this.linearMotion.set(new Vector2f());
 
 		}
 
