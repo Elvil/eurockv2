@@ -29,7 +29,7 @@ public class MainProgram {
 	public static float WORLD_SIZE_Y = 800;
 	private static int NUMBER_ARTIST = 0;
 	private static int NUMBER_SPECTATOR = 100;
-	private static int NUMBER_SECURITYAGENT = 10;
+	private static int NUMBER_SECURITYAGENT = 30;
 
 	/** Main program.
 	 * 
@@ -69,7 +69,7 @@ public class MainProgram {
 			environment.createArtist();
 		}
 		for (int i = 0; i < NUMBER_SPECTATOR; ++i) {
-			environment.createSpectator();
+			environment.createSpectator(new Point2f(MainProgram.WORLD_SIZE_X/2,MainProgram.WORLD_SIZE_Y/2));
 		}
 		for (int i = 0; i < NUMBER_SECURITYAGENT; ++i) {
 			environment.createSecurityAgent();

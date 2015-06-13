@@ -14,8 +14,10 @@ import fr.utbm.info.vi51.project.environment.Semantics;
 
 public class GraphicBomb extends AbstractGraphicObject {
 
+	public float bombSize = 0;
 	public GraphicBomb(SituatedObject bomb) {
 		super(bomb);
+		bombSize = BombObject.RAYON;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -34,7 +36,7 @@ public class GraphicBomb extends AbstractGraphicObject {
 		if (bomb.type.equals(Semantics.EXPLOSION))
 		{
 			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.yellow, bomb.lifetime));
-			g2d.fillOval((int)(this.shp.getBounds().getMinX() - BombObject.RAYON*bomb.lifetime), (int)(this.shp.getBounds().getMinY() - BombObject.RAYON*bomb.lifetime), (int)(2*BombObject.RAYON*bomb.lifetime), (int)(2*BombObject.RAYON*bomb.lifetime));
+			g2d.fillOval((int)(this.shp.getBounds().getMinX() - bombSize*bomb.lifetime), (int)(this.shp.getBounds().getMinY() - bombSize*bomb.lifetime), (int)(2*bombSize*bomb.lifetime), (int)(2*bombSize*bomb.lifetime));
 		}
 		if (bomb.type.equals(Semantics.BOMBEXPLOSEE))
 		{
@@ -43,12 +45,12 @@ public class GraphicBomb extends AbstractGraphicObject {
 	        Color gr = new Color (200, 200, 200, 200);
 			Paint p = new RadialGradientPaint(new Point2D.Double(
 	        		this.shp.getBounds().getMinX(),
-	        		this.shp.getBounds().getMinY()), BombObject.RAYON * 0.75f,
+	        		this.shp.getBounds().getMinY()), bombSize * 0.75f,
 	                new float[] { 0.0f, 1.0f },
 	                new Color[] {gr , w});
 	        g2d.setPaint(p);
 //			g2d.setColor(ColorInterpolation.interpolation(Color.red, Color.yellow, bomb.lifetime));
-			g2d.fillOval((int)(this.shp.getBounds().getMinX() - BombObject.RAYON), (int)(this.shp.getBounds().getMinY() - BombObject.RAYON), (int)(2*BombObject.RAYON), (int)(2*BombObject.RAYON));
+			g2d.fillOval((int)(this.shp.getBounds().getMinX() - bombSize), (int)(this.shp.getBounds().getMinY() - bombSize), (int)(2*bombSize), (int)(2*bombSize));
 		}
 		
 		

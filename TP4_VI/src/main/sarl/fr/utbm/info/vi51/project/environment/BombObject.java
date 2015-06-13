@@ -23,7 +23,7 @@ public class BombObject extends ImmobileObject {
 	{
 		if (type.equals(Semantics.BOMB))
 		{
-			lifetime += 0.05f;
+			lifetime += 0.01f;
 			if (lifetime > 1)
 			{
 				lifetime = 0;

@@ -71,13 +71,14 @@ agent spectator extends AbstractAnimat {
 			WANDER_MAX_ROTATION,
 			STOP_RADIUS,
 			SLOW_RADIUS);
-			this.alertBehaviour = new AlertBehaviour(30f);
 		}
 		else {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
 		}
+		
+			this.alertBehaviour = new AlertBehaviour(30f);
 		isGone = false;
-		positionExit = (new Point2f(-1,-1));
+		positionExit = (new Point2f(-1, -1));
 		this.liveBehaviour = new LiveBehaviour();
 		emit(new SimulationAgentReady)
 	}
@@ -93,32 +94,31 @@ agent spectator extends AbstractAnimat {
 			if(isAlive && !isGone)
 			{
 				isAlive = this.liveBehaviour.isAlive(occurrence.body.position, occurrence.perceptions);
+				var posBomb = this.liveBehaviour.fleeBomb(occurrence.body.position, occurrence.perceptions);
+				if (posBomb == new Point2f())
+				{
 				if(isAlive)
 				{
-
+					
 					var boolWander = true;
 					var stateFind = alertBehaviour.runAlert(occurrence.body, occurrence.perceptions);
-					if (positionExit== (new Point2f(-1,-1)))
-						positionExit = alertBehaviour.getExit(occurrence.body, occurrence.perceptions);
+					var nearestExit = alertBehaviour.getExit(occurrence.body, occurrence.perceptions);
+					if (nearestExit != new Point2f(-1, -1))
+						positionExit = nearestExit;
 					//EN stateFind il trouve ALERTED_OUT ou ALERTED
 					if(stateFind != null) {
-
+	
 						var target = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions);
-						if (positionExit != (new Point2f(-1,-1)))
+						if(positionExit != (new Point2f(-1, -1)))
 							target = positionExit;
-						if(target == (new Point2f(-1,-1))) { // Il ne sait pas où aller alors il va n'importe 
-						emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position, 
-								occurrence.body.direction, 
-								occurrence.body.currentLinearSpeed, 
-								occurrence.body.maxLinearSpeed, 
-								occurrence.body.currentAngularSpeed, 
-								occurrence.body.maxAngularSpeed
-							), new TypeChangeInfluence(stateFind))/*
-							emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+
+						if(target == (new Point2f(-1, -1))) { // Il ne sait pas où aller alors il va n'importe 
+							emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
+							occurrence.body.direction,
 							occurrence.body.currentLinearSpeed,
 							occurrence.body.maxLinearSpeed,
-							new Point2f(400, 400)),
-							new TypeChangeInfluence(stateFind));*/
+							occurrence.body.currentAngularSpeed,
+							occurrence.body.maxAngularSpeed), new TypeChangeInfluence(stateFind))
 						}
 						else
 						{
@@ -130,9 +130,10 @@ agent spectator extends AbstractAnimat {
 						}
 						boolWander = false;
 					}
+					
 					else {
 						var targetclame = this.alertBehaviour.searchTarget(occurrence.body, occurrence.perceptions)
-						if(targetclame != (new Point2f(-1,-1))) {
+						if(targetclame != (new Point2f(-1, -1))) {
 							if(occurrence.body.type == State.HUNGRY || occurrence.body.type == State.EATING)
 							{
 								emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
@@ -165,6 +166,15 @@ agent spectator extends AbstractAnimat {
 					emitInfluence(null, new NullInfluence())
 					if(!occurrence.body.type.equals(State.DEAD))
 					emitInfluence(null, new TypeChangeInfluence(State.DEAD))
+				}
+				}
+				else
+				{
+					emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
+							occurrence.body.currentLinearSpeed,
+							occurrence.body.maxLinearSpeed,
+							posBomb),
+							new TypeChangeInfluence(State.ALERTED));
 				}
 			}
 			else

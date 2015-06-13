@@ -68,41 +68,46 @@ import fr.utbm.info.vi51.general.tree.iterator.LeafTreeIterator;
  * @author St&eacute;phane GALLAND &lt;stephane.galland@utbm.fr&gt;
  * @version $Name$ $Revision$ $Date$
  */
-public class WorldModel extends AbstractEnvironment implements WorldModelStateProvider {
+public class WorldModel extends AbstractEnvironment implements
+		WorldModelStateProvider {
 
 	private final static float AGENT_SIZE = 10f;
-	
-	private final static float PERCEPTION_RADIUS = 400f;
-	
+
+	private final static float PERCEPTION_RADIUS = 400.0f;
+
 	private final static UUID TARGET_ID = UUID.randomUUID();
 
 	private final SpatialDataStructure<SituatedObject> dataStructure = new QuadTree();
 	private final SpatialDataStructure<SituatedObject> dataStructureImmobile = new QuadTree();
-	
+
 	private Point2f targetPosition;
 	private MouseTarget mouseTarget;
 
 	/**
-	 * @param width is the width of the world.
-	 * @param height is the height of the world.
+	 * @param width
+	 *            is the width of the world.
+	 * @param height
+	 *            is the height of the world.
 	 */
 	public WorldModel(float width, float height) {
 		super(width, height, new StepTimeManager(500));
 		this.dataStructure.initialize(new Rectangle2f(0f, 0f, width, height));
-		
-		this.dataStructureImmobile.initialize(new Rectangle2f(0f, 0f, width, height));
+
+		this.dataStructureImmobile.initialize(new Rectangle2f(0f, 0f, width,
+				height));
 	}
 
-	/** Replies the spatial data-structure.
+	/**
+	 * Replies the spatial data-structure.
 	 * 
 	 * @return the spatial data-structure.
 	 */
 	public SpatialDataStructure<SituatedObject> getSpatialDataStructure() {
 		return this.dataStructure;
 	}
-	
-	
-	/** Replies the spatial data-structureimmobile objetc.
+
+	/**
+	 * Replies the spatial data-structureimmobile objetc.
 	 * 
 	 * @return the spatial data-structure for immobile objetc.
 	 */
@@ -126,14 +131,15 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	protected void onAgentBodyDestroyed(AgentBody body) {
 		this.dataStructure.removeData(body);
 	}
-	
-	public void setImmobileObject(List<ImmobileObject> list){
-		for(ImmobileObject i : list){
+
+	public void setImmobileObject(List<ImmobileObject> list) {
+		for (ImmobileObject i : list) {
 			dataStructureImmobile.addData(i);
 		}
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setMouseTarget(Point2f target) {
 		synchronized (this) {
@@ -148,33 +154,34 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	 */
 	@Override
 	protected List<Percept> computePerceptionsFor(AgentBody agent) {
-		
+
 		List<Percept> shapedPercept = new ArrayList<>();
 		SituatedObject obj = null;
 		Frustum frustumAgent = agent.getFrustum();
-		
-		Shape2f<?> frustumShape = frustumAgent.toShape(agent.getPosition(), agent.getDirection());
-		//if (mouseTarget != null)
-			//shapedPercept.add(new Percept(mouseTarget));
-		
+
+		Shape2f<?> frustumShape = frustumAgent.toShape(agent.getPosition(),
+				agent.getDirection());
+		// if (mouseTarget != null)
+		// shapedPercept.add(new Percept(mouseTarget));
+
 		Iterator it = dataStructure.dataIterator(frustumShape);
-		
-		while(it.hasNext()){
+
+		while (it.hasNext()) {
 			obj = (SituatedObject) it.next();
-			if (!agent.getID().equals(obj.getID()) ) {
+			if (!agent.getID().equals(obj.getID())) {
 				shapedPercept.add(new Percept(obj));
 			}
 		}
-		
+
 		Iterator itImmobile = dataStructureImmobile.dataIterator(frustumShape);
-		
-		while(itImmobile.hasNext()){
+
+		while (itImmobile.hasNext()) {
 			obj = (SituatedObject) itImmobile.next();
 			if (!agent.getID().equals(obj.getID())) {
 				shapedPercept.add(new Percept(obj));
 			}
 		}
-		
+
 		return shapedPercept;
 	}
 
@@ -182,13 +189,15 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void applyInfluences(Collection<MotionInfluence> motionInfluences,
+	protected void applyInfluences(
+			Collection<MotionInfluence> motionInfluences,
 			Collection<Influence> otherInfluences, TimeManager timeManager) {
-	
-		QuadTreeNode root = new QuadTreeNode(new Rectangle2f(0f, 0f, getWidth(), getHeight()));
+
+		QuadTreeNode root = new QuadTreeNode(new Rectangle2f(0f, 0f,
+				getWidth(), getHeight()));
 		QuadTree<SituatedArtifact> actionTree = new QuadTree(root);
-		
-		//actionTree.setRoot(root);
+
+		// actionTree.setRoot(root);
 		//
 		// Consider other influences
 		for (Influence influence : otherInfluences) {
@@ -197,21 +206,20 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				this.dataStructure.removeData(this.mouseTarget);
 				this.mouseTarget = null;
 				stateChanged();
-			}
-			else if (influence instanceof TargetAdditionInfluence) {
+			} else if (influence instanceof TargetAdditionInfluence) {
 				assert (this.mouseTarget == null);
 				TargetAdditionInfluence i = (TargetAdditionInfluence) influence;
-				this.mouseTarget = new MouseTarget(i.getPosition().getX(), i.getPosition().getY());
+				this.mouseTarget = new MouseTarget(i.getPosition().getX(), i
+						.getPosition().getY());
 				this.dataStructure.addData(this.mouseTarget);
 				stateChanged();
 			} else if (influence instanceof TeletransportInfluence) {
 				assert (this.mouseTarget != null);
 				TeletransportInfluence i = (TeletransportInfluence) influence;
 				this.dataStructure.removeData(this.mouseTarget);
-				this.mouseTarget.setMousePosition(
-						i.getPosition(),
-						getTimeManager().getLastStepDuration(),
-						getWidth(), getHeight());
+				this.mouseTarget.setMousePosition(i.getPosition(),
+						getTimeManager().getLastStepDuration(), getWidth(),
+						getHeight());
 				this.dataStructure.addData(this.mouseTarget);
 				stateChanged();
 			} else if (influence instanceof TypeChangeInfluence) {
@@ -223,55 +231,50 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				if (id != null) {
 					AgentBody body = getAgentBodyFor(id);
 					if (body != null) {
-						if (i.getType().equals(State.DEAD) || i.getType().equals(State.GONE))
-						{
-							move(body, new Vector2f(0,0), 0);
+						if (i.getType().equals(State.DEAD)
+								|| i.getType().equals(State.GONE)) {
+							move(body, new Vector2f(0, 0), 0);
 							this.dataStructure.removeData(body);
 							body.setType(i.getType());
-							/*ImmobileObject im = new ImmobileObject(UUID.randomUUID(), body.getShape(), body.getPosition(), Semantics.DEAD);
-							im.setName(Semantics.DEAD);
-							im.setType(Semantics.DEAD);
-							this.dataStructureImmobile.addData(im);
-							Window.getInstance().addBuilding(GraphicObjectFactory.getInstance(im));*/
 						}
 						body.setType(i.getType());
 					}
 				}
 				stateChanged();
+			} else if (influence instanceof NullInfluence) {
+				stateChanged();
 			}
-			 else if (influence instanceof NullInfluence)
-				{
-					stateChanged();
-				}
 		}
-		
+
 		// ADD IMMOBILIE OBJECT
-		
-		IteratorData itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
-		
-		while(itImmobile.hasNext()){
-			SituatedArtifact addr = new SituatedArtifact((SituatedObject)itImmobile.next(), new Vector2f(0,0), 0);
+
+		IteratorData itImmobile = new IteratorData<SituatedObject>(
+				(QuadTree<SituatedObject>) dataStructureImmobile);
+
+		while (itImmobile.hasNext()) {
+			SituatedArtifact addr = new SituatedArtifact(
+					(SituatedObject) itImmobile.next(), new Vector2f(0, 0), 0);
 			actionTree.addData(addr);
-			//System.out.println(addr.getShape());
 		}
 		ImmobileObject tObj;
-		itImmobile = new IteratorData<SituatedObject>((QuadTree<SituatedObject>)dataStructureImmobile);
-		while(itImmobile.hasNext()){
-			tObj = (ImmobileObject)itImmobile.next();
-			if (tObj.getName().equals(Semantics.BOMB) || tObj.getName().equals(Semantics.BOMBEXPLOSEE) || tObj.getName().equals(Semantics.EXPLOSION))
-			{
+		itImmobile = new IteratorData<SituatedObject>(
+				(QuadTree<SituatedObject>) dataStructureImmobile);
+		while (itImmobile.hasNext()) {
+			tObj = (ImmobileObject) itImmobile.next();
+			if (tObj.getName().equals(Semantics.BOMB)
+					|| tObj.getName().equals(Semantics.BOMBEXPLOSEE)
+					|| tObj.getName().equals(Semantics.EXPLOSION)) {
 				ImmobileObject objTemp = tObj;
-				((BombObject)objTemp).update();
-				objTemp.setName(((BombObject)tObj).type);
+				((BombObject) objTemp).update();
+				objTemp.setName(((BombObject) tObj).type);
 				dataStructureImmobile.removeData(tObj);
 				if (!tObj.getName().equals(Semantics.BOMBEXPLOSEE))
 					dataStructureImmobile.addData(objTemp);
 			}
 		}
-		
-		
-		//this.displayTree(actionTree);
-		
+
+		// this.displayTree(actionTree);
+
 		//
 		// Put the influences in a spatial tree
 		for (MotionInfluence mi : motionInfluences) {
@@ -284,20 +287,25 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			Vector2f linearMotion;
 			float angularMotion;
 			if (mi.getType() == DynamicType.KINEMATIC) {
-				linearMotion = computeKinematicTranslation(body, mi.getLinearInfluence(), getTimeManager());
-				angularMotion = computeKinematicRotation(body, mi.getAngularInfluence(), getTimeManager());
+				linearMotion = computeKinematicTranslation(body,
+						mi.getLinearInfluence(), getTimeManager());
+				angularMotion = computeKinematicRotation(body,
+						mi.getAngularInfluence(), getTimeManager());
 			} else {
-				linearMotion = computeSteeringTranslation(body, mi.getLinearInfluence(), getTimeManager());
-				angularMotion = computeSteeringRotation(body, mi.getAngularInfluence(), getTimeManager());
+				linearMotion = computeSteeringTranslation(body,
+						mi.getLinearInfluence(), getTimeManager());
+				angularMotion = computeSteeringRotation(body,
+						mi.getAngularInfluence(), getTimeManager());
 			}
 
-			actionTree.addData(new SituatedArtifact(body, linearMotion, angularMotion));
-		}	
-		
+			actionTree.addData(new SituatedArtifact(body, linearMotion,
+					angularMotion));
+		}
+
 		// Detect conflicts
-		
-		
-		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(actionTree.getRoot());
+
+		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(
+				actionTree.getRoot());
 		while (iterator.hasNext()) {
 			QuadTreeNode node = iterator.next();
 			List<SituatedArtifact> influences = new ArrayList<>();
@@ -308,26 +316,24 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			for (int i = 0; i < influences.size(); ++i) {
 				SituatedArtifact inf1 = influences.get(i);
 				if (!inf1.isEmpty()) {
-					Shape2f<?> s1 = inf1.getShape();	
-					for (SituatedObject obj : this.dataStructureImmobile.getData()) {
-						if ( (s1.intersects(obj.getShape()) && (inf1.getObject() != null) )) {
-							inf1.clear();
-							break;
+					Shape2f<?> s1 = inf1.getShape();
+					for (SituatedObject obj : this.dataStructureImmobile
+							.getData()) {
+						if ((s1.intersects(obj.getShape()) && (inf1.getObject() != null))) {
+							if (!obj.getName().equals(Semantics.BOMB)) {
+								inf1.clear();
+								break;
+							}
 						}
 					}
-					if (!inf1.isEmpty() && i < influences.size() - 1) {
-						/*for (int j = i + 1; j < influences.size(); ++j) {
-							SituatedArtifact inf2 = influences.get(j);
-							if (!inf2.isEmpty()) {
-								if (s1.intersects(inf2.getShape()) && (inf1.getObject() != null)) {
-									if(inf2.getObject() instanceof AgentBody){
-									//inf2.clear();
-									}
-									//break;
-								}
-							}
-						}*/
-					}
+					/*
+					 * if (!inf1.isEmpty() && i < influences.size() - 1) { for
+					 * (int j = i + 1; j < influences.size(); ++j) {
+					 * SituatedArtifact inf2 = influences.get(j); if
+					 * (!inf2.isEmpty()) { if (s1.intersects(inf2.getShape()) &&
+					 * (inf1.getObject() != null)) { if(inf2.getObject()
+					 * instanceof AgentBody){ //inf2.clear(); } //break; } } } }
+					 */
 				}
 			}
 		}
@@ -340,22 +346,20 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 				boolean b = this.dataStructure.removeData(obj);
 				assert (b) : "Object cannot be removed from quadtree: " + obj;
 				move(obj, action.getLinearMotion(), action.getAngularMotion());
-				/*if (obj.getType().equals(Semantics.DEAD))
-					move(obj, new Vector2f(0,0), 0);*/
 				b = this.dataStructure.addData(obj);
 				assert (b) : "Object cannot be added in quadtree: " + obj;
 			}
 		}
 	}
 
-	public void addImmobileObject(SituatedObject obj)
-	{
+	public void addImmobileObject(SituatedObject obj) {
 		dataStructureImmobile.addData(obj);
 	}
-	public void removeImmobileObject(SituatedObject obj)
-	{
+
+	public void removeImmobileObject(SituatedObject obj) {
 		dataStructureImmobile.removeData(obj);
 	}
+
 	@Override
 	public Iterable<SituatedObject> getAllObjects() {
 		return this.dataStructure.getData();
@@ -368,13 +372,13 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			target = this.targetPosition;
 		}
 		Influence influence;
-		if (target==null) {
+		if (target == null) {
 			if (this.mouseTarget == null) {
 				return Collections.emptyList();
 			}
 			influence = new RemoveInfluence(TARGET_ID);
 		} else if (this.mouseTarget != null) {
-			//influence = new TargetAdditionInfluence(TARGET_ID, target);
+			// influence = new TargetAdditionInfluence(TARGET_ID, target);
 			influence = new TeletransportInfluence(TARGET_ID, target);
 		} else {
 			influence = new TargetAdditionInfluence(TARGET_ID, target);
@@ -382,112 +386,107 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		return Collections.singletonList(influence);
 	}
 
-	/** Create the body of a rabbit.
+	/**
+	 * Create the body of a rabbit.
 	 * 
 	 * DONT DELETE, keep this example safe
 	 */
 	public void createRabbit() {
 		UUID id = UUID.randomUUID();
-		AgentBody body = new AgentBody(
-				id,
-				new Circle2f(0f, 0f, AGENT_SIZE), // body
-				5f,						// max linear speed m/s
-				.5f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/4f,				// max angular speed r/s
-				MathUtil.PI/10f,			// max angular acceleration (r/s)/s
+		AgentBody body = new AgentBody(id, new Circle2f(0f, 0f, AGENT_SIZE), // body
+				5f, // max linear speed m/s
+				.5f, // max linear acceleration (m/s)/s
+				MathUtil.PI / 4f, // max angular speed r/s
+				MathUtil.PI / 10f, // max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class, "RABBIT", getAgentBodyNumber() + 1));
-		addAgentBody(
-				body,
-				randomPosition(),
-				(float) Math.random() * MathUtil.TWO_PI);
+		body.setName(LocalizedString.getString(WorldModel.class, "RABBIT",
+				getAgentBodyNumber() + 1));
+		addAgentBody(body, randomPosition(), (float) Math.random()
+				* MathUtil.TWO_PI);
 	}
-	
-	/** Create the body of a Artist.
+
+	/**
+	 * Create the body of a Artist.
 	 */
 	public void createArtist() {
 		UUID id = UUID.randomUUID();
-		AgentBody body = new AgentBody(
-				id,
-				new Circle2f(0f, 0f, AGENT_SIZE), // body
-				1f,						// max linear speed m/s
-				.4f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/3f,				// max angular speed r/s
-				MathUtil.PI/4f,			// max angular acceleration (r/s)/s
+		AgentBody body = new AgentBody(id, new Circle2f(0f, 0f, AGENT_SIZE), // body
+				1f, // max linear speed m/s
+				.4f, // max linear acceleration (m/s)/s
+				MathUtil.PI / 3f, // max angular speed r/s
+				MathUtil.PI / 4f, // max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class, Semantics.ARTIST, getAgentBodyNumber() + 1));
-		addAgentBody(
-				body,
-				randomPosition(),
-				(float) Math.random() * MathUtil.TWO_PI);
-	}
-	
-	
-	/** Create the body of a Spectator.
-	 */
-	public void createSpectator() {
-		UUID id = UUID.randomUUID();
-		AgentBody body = new AgentBody(
-				id,
-				new Circle2f(0f, 0f, AGENT_SIZE), // body
-				2f,						// max linear speed m/s
-				.4f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/1.5f,				// max angular speed r/s
-				MathUtil.PI/2f,			// max angular acceleration (r/s)/s
-				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SPECTATOR, getAgentBodyNumber() + 1));
-		addAgentBody(
-				body,
-				randomPosition(),
-				(float) Math.random() * MathUtil.TWO_PI);
+		body.setName(LocalizedString.getString(WorldModel.class,
+				Semantics.ARTIST, getAgentBodyNumber() + 1));
+		addAgentBody(body, randomPosition(), (float) Math.random()
+				* MathUtil.TWO_PI);
 	}
 
-	/** Create the body of a SecurityAgent.
+	/**
+	 * Create the body of a Spectator.
 	 */
-	
+	public void createSpectator(Point2f position) {
+		UUID id = UUID.randomUUID();
+		AgentBody body = new AgentBody(id, new Circle2f(0f, 0f, AGENT_SIZE), // body
+				4f, // max linear speed m/s
+				0.8f, // max linear acceleration (m/s)/s
+				MathUtil.PI, // max angular speed r/s
+				MathUtil.PI / 2f, // max angular acceleration (r/s)/s
+				new CircleFrustum(id, PERCEPTION_RADIUS));
+		body.setName(LocalizedString.getString(WorldModel.class,
+				Semantics.SPECTATOR, getAgentBodyNumber() + 1));
+		addAgentBody(body, position, (float) Math.random() * MathUtil.TWO_PI);
+	}
+
+	public void createSpectator() {
+		createSpectator(randomPosition());
+	}
+
+	/**
+	 * Create the body of a SecurityAgent.
+	 */
+
 	public void createSecurityAgent() {
 		UUID id = UUID.randomUUID();
-		AgentBody body = new AgentBody(
-				id,
-				new Circle2f(0f, 0f, AGENT_SIZE), // body
-				2f,						// max linear speed m/s
-				.5f,						// max linear acceleration (m/s)/s
-				MathUtil.PI/2f,				// max angular speed r/s
-				MathUtil.PI/7f,			// max angular acceleration (r/s)/s
+		AgentBody body = new AgentBody(id, new Circle2f(0f, 0f, AGENT_SIZE), // body
+				5f, // max linear speed m/s
+				1f, // max linear acceleration (m/s)/s
+				MathUtil.PI * 2f, // max angular speed r/s
+				MathUtil.PI, // max angular acceleration (r/s)/s
 				new CircleFrustum(id, PERCEPTION_RADIUS));
-		body.setName(LocalizedString.getString(WorldModel.class,Semantics.SECURITY_AGENT, getAgentBodyNumber() + 1));
-		addAgentBody(
-				body,
-				randomPosition(),
-				(float) Math.random() * MathUtil.TWO_PI);
+		body.setName(LocalizedString.getString(WorldModel.class,
+				Semantics.SECURITY_AGENT, getAgentBodyNumber() + 1));
+		addAgentBody(body, randomPosition(), (float) Math.random()
+				* MathUtil.TWO_PI);
 	}
 
 	protected Point2f randomPosition() {
-		
+
 		boolean search = true;
 		float x = 1;
 		float y = 1;
 		SituatedObject obj = null;
-		while(search){
+		while (search) {
 			x = (float) Math.random() * getWidth() - AGENT_SIZE;
 			y = (float) Math.random() * getHeight() - AGENT_SIZE;
-			Rectangle2f position = new Rectangle2f(new Point2f(x-1,y-1), new Point2f(x+1,y+1));
+			Rectangle2f position = new Rectangle2f(new Point2f(x - 1, y - 1),
+					new Point2f(x + 1, y + 1));
 			Iterator itImmobile = dataStructureImmobile.dataIterator(position);
-			
-			if(itImmobile.hasNext()){
+
+			if (itImmobile.hasNext()) {
 				search = true;
-			}else{
+			} else {
 				search = false;
 			}
 		}
-		
+
 		return new Point2f(x, y);
 	}
-	
-	public void displayTree(QuadTree<SituatedArtifact> tree){
+
+	public void displayTree(QuadTree<SituatedArtifact> tree) {
 		Iterator<QuadTreeNode> iterator = new LeafTreeIterator(tree.getRoot());
-		
-		while(iterator.hasNext()){
+
+		while (iterator.hasNext()) {
 			System.out.println(iterator.next().getBounds());
 		}
 	}
@@ -498,54 +497,59 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 	 * @author St&eacute;phane GALLAND &lt;stephane.galland@utbm.fr&gt;
 	 * @version $Name$ $Revision$ $Date$
 	 */
-	private static class SituatedArtifact implements ShapedObject, Comparable<SituatedArtifact> {
+	private static class SituatedArtifact implements ShapedObject,
+			Comparable<SituatedArtifact> {
 
 		private final MobileObject object;
 		private final Vector2f linearMotion;
 		private final float angularMotion;
-		//private final MotionHull2f shape;
+		// private final MotionHull2f shape;
 		private final Shape2f shape;
 		private boolean cleared;
-		
+
 		/**
 		 * @param object
 		 * @param linearMotion
 		 * @param angularMotion
 		 */
-		public SituatedArtifact(SituatedObject object, Vector2f linearMotion, float angularMotion) {
-			this.object = object instanceof MobileObject ? (MobileObject) object : null;
+		public SituatedArtifact(SituatedObject object, Vector2f linearMotion,
+				float angularMotion) {
+			this.object = object instanceof MobileObject ? (MobileObject) object
+					: null;
 			this.linearMotion = linearMotion;
 			this.angularMotion = angularMotion;
-			//this.shape = object.getPosition();
+			// this.shape = object.getPosition();
 			if (!(object instanceof AgentBody))
 				this.shape = object.getShape();
 			else
-				this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
+				this.shape = new MotionHull2f(object.getPosition(),
+						linearMotion, object.getShape().getMaxDemiSize());
 		}
-		
-		/*public SituatedArtifact(SituatedObject objectImmobile){
-			this.object = null;
-			this.linearMotion = null;
-			this.angularMotion = 0;
-			this.shape = new MotionHull2f(object.getPosition(), linearMotion, object.getShape().getMaxDemiSize());
-		}*/
-		
+
+		/*
+		 * public SituatedArtifact(SituatedObject objectImmobile){ this.object =
+		 * null; this.linearMotion = null; this.angularMotion = 0; this.shape =
+		 * new MotionHull2f(object.getPosition(), linearMotion,
+		 * object.getShape().getMaxDemiSize()); }
+		 */
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof SituatedArtifact) {
 				SituatedArtifact a = (SituatedArtifact) obj;
 				return Objects.equal(this.object, a.object)
-					&& Objects.equal(this.linearMotion, a.linearMotion)
-					&& this.angularMotion == a.angularMotion;
+						&& Objects.equal(this.linearMotion, a.linearMotion)
+						&& this.angularMotion == a.angularMotion;
 			}
 			return false;
 		}
-		
+
 		@Override
 		public int hashCode() {
-			return Objects.hashCode(this.object, this.linearMotion, this.angularMotion);
+			return Objects.hashCode(this.object, this.linearMotion,
+					this.angularMotion);
 		}
-		
+
 		@Override
 		public int compareTo(SituatedArtifact o) {
 			if (o == this) {
@@ -569,16 +573,18 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			}
 			return Float.compare(this.angularMotion, o.angularMotion);
 		}
-		
-		/** Replies the object to move.
+
+		/**
+		 * Replies the object to move.
 		 *
 		 * @return the object to move.
 		 */
 		public MobileObject getObject() {
 			return this.object;
 		}
-		
-		/** Replies the linear motion.
+
+		/**
+		 * Replies the linear motion.
 		 * 
 		 * @return the linear motion.
 		 */
@@ -586,7 +592,8 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 			return this.linearMotion;
 		}
 
-		/** Replies the angular motion.
+		/**
+		 * Replies the angular motion.
 		 * 
 		 * @return the angular motion.
 		 */
@@ -598,29 +605,32 @@ public class WorldModel extends AbstractEnvironment implements WorldModelStatePr
 		public Shape2f<?> getShape() {
 			return this.shape.clone();
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.linearMotion + "|" + this.angularMotion;
 		}
-		
-		/** Replies if this object contains no movement definition.
+
+		/**
+		 * Replies if this object contains no movement definition.
 		 *
-		 * @return <code>true</code> if this object contains a movement definition.
+		 * @return <code>true</code> if this object contains a movement
+		 *         definition.
 		 */
 		public boolean isEmpty() {
 			return this.cleared;
 		}
-		
-		/** Clear the movement definition.
+
+		/**
+		 * Clear the movement definition.
 		 */
 		public void clear() {
 			this.linearMotion.normalize();
 			this.linearMotion.negate();
-			this.linearMotion.setLength(this.linearMotion.length()/2);
-			/*this.linearMotion.setOrientationAngle(45);*/
-			//this.cleared = true;
-			//this.linearMotion.set(new Vector2f());
+			this.linearMotion.setLength(this.linearMotion.length());
+			/* this.linearMotion.setOrientationAngle(45); */
+			// this.cleared = true;
+			// this.linearMotion.set(new Vector2f());
 
 		}
 

@@ -70,11 +70,12 @@ agent SecurityAgent extends AbstractAnimat {
 			WANDER_MAX_ROTATION,
 			STOP_RADIUS,
 			SLOW_RADIUS);
-			this.securityAlert = new SecurityBehaviour(50F);
 		}
 		else {
 			this.seekBehaviour = new KinematicSeekBehaviour this.fleeBehaviour = new KinematicFleeBehaviour this.wanderBehaviour = new KinematicWanderBehaviour
 		}
+		
+			this.securityAlert = new SecurityBehaviour(20f);
 		this.liveBehaviour = new LiveBehaviour();
 		emit(new SimulationAgentReady)
 	}
@@ -89,19 +90,30 @@ agent SecurityAgent extends AbstractAnimat {
 				var boolWander = true;
 				var posBomb : Point2f;
 				var positionCopain : Point2f;
+				positionCopain = this.securityAlert.fleeAgent(occurrence.body.position, occurrence.perceptions);
 				if(target !== null) {
 				//Si la bombe est proche et que il y a personne d'autre plus proche alors il vois la bombe
-					if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED_OUT) || securityAlert.getBombFind) {
-						posBomb = this.securityAlert.followAgent(occurrence.body.position, occurrence.perceptions)
-						positionCopain = this.securityAlert.fleeAgent(occurrence.body.position, occurrence.perceptions);
-						if(posBomb.getX() != 0) {
-							emitInfluence(this.seekBehaviour.runSeek(occurrence.body.position,
+					var bomb = this.liveBehaviour.fleeBomb(occurrence.body.position, occurrence.perceptions);
+					if(securityAlert.runAlert(occurrence.body.position, occurrence.perceptions) || occurrence.body.type.equals(State.ALERTED_OUT)) {
+						//posBomb = this.securityAlert.followAgent(occurrence.body.position, occurrence.perceptions)
+						if(bomb != new Point2f()) {
+							emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
 							occurrence.body.currentLinearSpeed,
 							occurrence.body.maxLinearSpeed,
-							posBomb),
+							bomb),
 							new TypeChangeInfluence(State.ALERTED_OUT))
 						} else
 						{
+							
+							if(positionCopain != new Point2f(-1,-1))
+							{
+								emitInfluence(this.fleeBehaviour.runFlee(occurrence.body.position,
+								occurrence.body.currentLinearSpeed,
+								occurrence.body.maxLinearSpeed,
+								positionCopain),
+								new TypeChangeInfluence(State.ALERTED_OUT))
+							}
+							else
 							emitInfluence(this.wanderBehaviour.runWander(occurrence.body.position,
 							occurrence.body.direction,
 							occurrence.body.currentLinearSpeed,
@@ -151,7 +163,6 @@ agent SecurityAgent extends AbstractAnimat {
 			}
 			else
 			{
-				print("Mort \n")
 				emitInfluence(null, new NullInfluence())
 				if(!occurrence.body.type.equals(State.DEAD))
 				emitInfluence(null, new TypeChangeInfluence(State.DEAD))

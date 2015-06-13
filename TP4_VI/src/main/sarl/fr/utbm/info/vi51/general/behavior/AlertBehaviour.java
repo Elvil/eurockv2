@@ -69,7 +69,7 @@ public class AlertBehaviour {
 			if (!perceptions.isEmpty()) {
 
 				for (Percept p : perceptions) {
-					if (position.distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
+					if (position.distance(p.getShape().getBounds().getCenter()) < 100*RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
 						if (p.getName().equals(Semantics.EXIT)) {
 							return p.getPosition();
 						}
@@ -88,6 +88,15 @@ public class AlertBehaviour {
 		case EATING:
 		case HUNGRY:
 			target = Semantics.STAND_MIAM;
+			for (Percept p : perceptions) {
+				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
+					if (p.getName().equals(Semantics.STAND_MIAM)) {
+						if (p != null)
+							return p.getPosition();
+					}
+				}
+			}
+	
 			break;
 
 		case ALERTED:
@@ -97,7 +106,6 @@ public class AlertBehaviour {
 					if (p.getName().equals(Semantics.EXIT)) {
 						if (p != null)
 							return p.getPosition();
-						return null;
 					}
 				}
 			}
@@ -116,9 +124,23 @@ public class AlertBehaviour {
 			break;
 
 		case SEARCH_WATCHING:
+			for (Percept p : perceptions) {
+				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
+					if (p.getName().equals(Semantics.SCENE_LOGGIA) || p.getName().equals(Semantics.SCENE_PLAGE) || p.getName().equals(Semantics.SCENE_GRAND)) {
+						if (p != null)
+							return p.getPosition();
+					}
+				}
+			}
 		case WATCHING:
-			target = body.getWantToWatch();
-			break;
+			for (Percept p : perceptions) {
+				if (body.getPosition().distance(p.getShape().getBounds().getCenter()) < RADIUS_ALERT+(p.getShape().getMaxDemiSize()*2)) {
+					if (p.getName().equals(Semantics.SCENE_LOGGIA) || p.getName().equals(Semantics.SCENE_PLAGE) || p.getName().equals(Semantics.SCENE_GRAND)) {
+						if (p != null)
+							return p.getPosition();
+					}
+				}
+			}
 		}
 
 		/*if (target != null) {
