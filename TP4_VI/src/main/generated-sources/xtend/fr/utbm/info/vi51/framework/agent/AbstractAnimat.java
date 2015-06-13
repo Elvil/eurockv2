@@ -1,5 +1,9 @@
 package fr.utbm.info.vi51.framework.agent;
 
+import com.google.common.base.Objects;
+import fr.utbm.info.vi51.framework.agent.BehaviourOutput;
+import fr.utbm.info.vi51.framework.agent.PhysicEnvironment;
+import fr.utbm.info.vi51.framework.agent.StandardPhysicEnvironment;
 import fr.utbm.info.vi51.framework.environment.DynamicType;
 import fr.utbm.info.vi51.framework.environment.Influence;
 import fr.utbm.info.vi51.framework.environment.StopSimulation;
@@ -16,11 +20,8 @@ import io.sarl.lang.annotation.ImportedCapacityFeature;
 import io.sarl.lang.core.Agent;
 import io.sarl.lang.core.AgentContext;
 import io.sarl.lang.core.Percept;
-
 import java.util.List;
 import java.util.UUID;
-
-import com.google.common.base.Objects;
 
 @SuppressWarnings("all")
 public class AbstractAnimat extends Agent {

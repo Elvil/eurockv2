@@ -27,7 +27,7 @@ public class MainProgram {
 	public static float WORLD_SIZE_X = 800;
 	public static float WORLD_SIZE_Y = 800;
 	private static int NUMBER_ARTIST = 0;
-	private static int NUMBER_SPECTATOR = 100;
+	private static int NUMBER_SPECTATOR = 200;
 	private static int NUMBER_SECURITYAGENT = 30;
 
 	/** Main program.
@@ -37,13 +37,7 @@ public class MainProgram {
 	 */	
 	public static void main(String[] argv) throws Exception {
 
-		System.out.println(LocalizedString.getString(MainProgram.class, "INTRO_MESSAGE")); //$NON-NLS-1$
-
-		/*DynamicType type = BehaviorTypeSelector.open();
-		
-		if(type == null){
-			System.exit(0);
-		}*/
+//		System.out.println(LocalizedString.getString(MainProgram.class, "INTRO_MESSAGE")); //$NON-NLS-1$
 		
 		WorldModel environment = new WorldModel(WORLD_SIZE_X, WORLD_SIZE_Y);
 
@@ -54,12 +48,8 @@ public class MainProgram {
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(5, 5), new Point2f(100, 100)), new Point2f(50,550), Semantics.SCENE_LOGGIA));
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,50), Semantics.SCENE_PLAGE));
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(550,550), Semantics.STAND_MIAM));
-//		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(10, 100)), new Point2f(790,550), Semantics.EXIT));
-		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Circle2f(400,400,20), new Point2f(0,0), Semantics.EXIT));
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(0, 0), new Point2f(50, 50)), new Point2f(0,400), Semantics.EXIT));
-//			
 		listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(0, 0), new Point2f(50, 50)), new Point2f(750,400), Semantics.EXIT));
-		//listIm.add(new ImmobileObject(UUID.randomUUID(), new Rectangle2f(new Point2f(3, 2), new Point2f(100, 100)), new Point2f(400,400), Semantics.SCENE));
 		environment.setImmobileObject(listIm);
 		
 		Window w = Window.getInstance();
@@ -78,18 +68,11 @@ public class MainProgram {
 		w.setEnvironment(environment);
 		w.run();
 		
-		
-		
-		//FrameworkGUI gui = new GUI(WORLD_SIZE_X, WORLD_SIZE_Y,environment.getTimeManager());
-		
 		FrameworkLauncher.launchSimulation(
 				environment,
 				new ApplicationMapping(),
 				DynamicType.STEERING,
 				w);
-		
-	//	environment.displayTree();
-				
 	}
 
 	/**
@@ -101,7 +84,6 @@ public class MainProgram {
 		@Override
 		public Class<? extends Agent> getAgentTypeForBody(AgentBody body) {
 
-			//System.out.println("création de l'agent := " + body.getName());
 			if(body.getName() == "ARTIST") {
 				return Artist.class;
 			} else if (body.getName() == "SPECTATOR") {
@@ -110,9 +92,7 @@ public class MainProgram {
 				return SecurityAgent.class;
 			}
 			return null;
-			//return Artist.class;
 		}
-
 	}
 
 }

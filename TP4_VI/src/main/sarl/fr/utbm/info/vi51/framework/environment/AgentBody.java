@@ -164,7 +164,7 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			}
 
 			if (getType().equals(State.ALERTED_OUT)) {
-				//System.out.println("Je suis en alerte wesh");
+				
 			}
 
 			if (getType().equals(State.SEARCH_WATCHING)) {
@@ -206,7 +206,6 @@ public class AgentBody extends AbstractMobileObject implements Body {
 			if(nbRand >= 7 && !Semantics.SCENE_PLAGE.equals(old)){
 				newWant = Semantics.SCENE_PLAGE;
 			}
-			//System.out.println(newWant);
 		}
 
 		return newWant;

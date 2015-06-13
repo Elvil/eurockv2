@@ -1,5 +1,6 @@
 package fr.utbm.info.vi51.framework.agent;
 
+import fr.utbm.info.vi51.framework.agent.PhysicEnvironment;
 import fr.utbm.info.vi51.framework.environment.DynamicType;
 import fr.utbm.info.vi51.framework.environment.Influence;
 import fr.utbm.info.vi51.framework.environment.InfluenceEvent;
@@ -28,11 +29,9 @@ import io.sarl.lang.core.Skill;
 import io.sarl.lang.core.Space;
 import io.sarl.lang.core.SpaceID;
 import io.sarl.util.OpenEventSpace;
-
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.UUID;
-
 import org.eclipse.xtext.xbase.lib.Conversions;
 
 @SuppressWarnings("all")

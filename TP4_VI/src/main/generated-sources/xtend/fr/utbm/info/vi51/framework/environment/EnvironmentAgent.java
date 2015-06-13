@@ -1,5 +1,13 @@
 package fr.utbm.info.vi51.framework.environment;
 
+import fr.utbm.info.vi51.framework.environment.AgentBody;
+import fr.utbm.info.vi51.framework.environment.Environment;
+import fr.utbm.info.vi51.framework.environment.Influence;
+import fr.utbm.info.vi51.framework.environment.InfluenceEvent;
+import fr.utbm.info.vi51.framework.environment.PerceptionEvent;
+import fr.utbm.info.vi51.framework.environment.SimulationAgentReady;
+import fr.utbm.info.vi51.framework.environment.StartSimulation;
+import fr.utbm.info.vi51.framework.environment.StopSimulation;
 import fr.utbm.info.vi51.framework.time.TimeManager;
 import fr.utbm.info.vi51.framework.time.TimePercept;
 import fr.utbm.info.vi51.framework.util.AddressUUIDScope;
@@ -29,11 +37,9 @@ import io.sarl.lang.core.Scope;
 import io.sarl.lang.core.Space;
 import io.sarl.lang.core.SpaceID;
 import io.sarl.util.OpenEventSpace;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 

@@ -1,10 +1,9 @@
 package fr.utbm.info.vi51.framework.environment;
 
+import fr.utbm.info.vi51.framework.environment.Influence;
 import io.sarl.lang.annotation.Generated;
 import io.sarl.lang.core.Event;
-
 import java.util.List;
-
 import org.eclipse.xtext.xbase.lib.Conversions;
 
 /**

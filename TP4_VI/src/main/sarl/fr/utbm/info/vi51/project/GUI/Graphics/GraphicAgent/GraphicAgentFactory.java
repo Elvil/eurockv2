@@ -7,7 +7,6 @@ public class GraphicAgentFactory {
 
 	public static AbstractGraphicAgent getInstance(AgentBody r)
 	{
-		System.out.println(""+r.getName());
 		if (r.getName().equals(Semantics.ARTIST))
 			return new GraphicArtist(r);
 		if (r.getName().equals(Semantics.SECURITY_AGENT))
@@ -15,6 +14,5 @@ public class GraphicAgentFactory {
 		if (r.getName().equals(Semantics.SPECTATOR))
 			return new GraphicSpectator(r);
 		return null;
-		//return new GraphicSpectator(r);
 	}
 }
